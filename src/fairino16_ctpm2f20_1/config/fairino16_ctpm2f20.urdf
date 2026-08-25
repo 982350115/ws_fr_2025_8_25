@@ -1,0 +1,797 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="fairino16_gripper_robot">
+
+  <link name="world" />
+  <joint name="world_to_base" type="fixed">
+    <parent link="world" />
+    <child link="base_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.00017171 -0.00016075 0.041272"
+        rpy="0 0 0" />
+      <mass
+        value="1.6231" />
+      <inertia
+        ixx="0.0039513"
+        ixy="1.1032E-05"
+        ixz="-1.0078E-05"
+        iyy="0.0039509"
+        iyz="-9.408E-06"
+        izz="0.0063729" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="shoulder_link">
+    <inertial>
+      <origin
+        xyz="2.6949E-07 -0.0077161 0.17504"
+        rpy="0 0 0" />
+      <mass
+        value="3.7152" />
+      <inertia
+        ixx="0.015538"
+        ixy="-6.8007E-08"
+        ixz="-8.8038E-08"
+        iyy="0.014566"
+        iyz="0.00023847"
+        izz="0.012006" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/shoulder_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/shoulder_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j1"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="shoulder_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.0543"
+      upper="3.0543"
+      effort="150"
+      velocity="3.15" />
+    <calibration
+      rising="0"
+      falling="0" />
+    <dynamics
+      damping="0"
+      friction="0" />
+    <safety_controller
+      soft_upper_limit="3.0543261"
+      soft_lower_limit="-3.0543261"
+      k_position="100.0"
+      k_velocity="40.0" />
+  </joint>
+  <link
+    name="upperarm_link">
+    <inertial>
+      <origin
+        xyz="-0.20845 -1.0388E-06 0.18245"
+        rpy="0 0 0" />
+      <mass
+        value="9.4622" />
+      <inertia
+        ixx="0.025921"
+        ixy="2.097E-07"
+        ixz="0.0025747"
+        iyy="0.37903"
+        iyz="1.3969E-07"
+        izz="0.37439" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/upperarm_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/upperarm_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j2"
+    type="revolute">
+    <origin
+      xyz="0 0 0.18"
+      rpy="1.5708 0 0" />
+    <parent
+      link="shoulder_link" />
+    <child
+      link="upperarm_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-4.6251"
+      upper="1.4835"
+      effort="150"
+      velocity="3.15" />
+    <calibration
+      rising="0"
+      falling="0" />
+    <dynamics
+      damping="0"
+      friction="0" />
+    <safety_controller
+      soft_upper_limit="3.0543261"
+      soft_lower_limit="-3.0543261"
+      k_position="100.0"
+      k_velocity="40.0" />
+  </joint>
+  <link
+    name="forearm_link">
+    <inertial>
+      <origin
+        xyz="-0.23441 5.6569E-07 0.048131"
+        rpy="0 0 0" />
+      <mass
+        value="2.9964" />
+      <inertia
+        ixx="0.003827"
+        ixy="-1.6004E-07"
+        ixz="-0.0011373"
+        iyy="0.054019"
+        iyz="-5.5129E-08"
+        izz="0.053512" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/forearm_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/forearm_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j3"
+    type="revolute">
+    <origin
+      xyz="-0.52 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="upperarm_link" />
+    <child
+      link="forearm_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.8274"
+      upper="2.8274"
+      effort="150"
+      velocity="3.15" />
+    <calibration
+      rising="0"
+      falling="0" />
+    <dynamics
+      damping="0"
+      friction="0" />
+    <safety_controller
+      soft_upper_limit="3.0543261"
+      soft_lower_limit="-3.0543261"
+      k_position="100.0"
+      k_velocity="40.0" />
+  </joint>
+  <link
+    name="wrist1_link">
+    <inertial>
+      <origin
+        xyz="2.4949E-07 -0.002597 0.1549"
+        rpy="0 0 0" />
+      <mass
+        value="2.1573" />
+      <inertia
+        ixx="0.0033086"
+        ixy="1.2835E-08"
+        ixz="6.0662E-08"
+        iyy="0.0024933"
+        iyz="3.9256E-05"
+        izz="0.003143" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/wrist1_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/wrist1_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j4"
+    type="revolute">
+    <origin
+      xyz="-0.4 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="forearm_link" />
+    <child
+      link="wrist1_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-4.6251"
+      upper="1.4835"
+      effort="28"
+      velocity="3.2" />
+    <calibration
+      rising="0"
+      falling="0" />
+    <dynamics
+      damping="0"
+      friction="0" />
+    <safety_controller
+      soft_upper_limit="3.0543261"
+      soft_lower_limit="-3.0543261"
+      k_position="100.0"
+      k_velocity="40.0" />
+  </joint>
+  <link
+    name="wrist2_link">
+    <inertial>
+      <origin
+        xyz="-2.4949E-07 0.002597 0.1099"
+        rpy="0 0 0" />
+      <mass
+        value="2.1573" />
+      <inertia
+        ixx="0.0033086"
+        ixy="1.2835E-08"
+        ixz="-6.0662E-08"
+        iyy="0.0024933"
+        iyz="-3.9256E-05"
+        izz="0.003143" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/wrist2_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/wrist2_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j5"
+    type="revolute">
+    <origin
+      xyz="0 0 0.159"
+      rpy="1.5708 0 0" />
+    <parent
+      link="wrist1_link" />
+    <child
+      link="wrist2_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.0543"
+      upper="3.0543"
+      effort="28"
+      velocity="3.2" />
+    <calibration
+      rising="0"
+      falling="0" />
+    <dynamics
+      damping="0"
+      friction="0" />
+    <safety_controller
+      soft_upper_limit="3.0543261"
+      soft_lower_limit="-3.0543261"
+      k_position="100.0"
+      k_velocity="40.0" />
+  </joint>
+  <link
+    name="wrist3_link">
+    <inertial>
+      <origin
+        xyz="-8.7063E-06 -3.2122E-05 0.082426"
+        rpy="0 0 0" />
+      <mass
+        value="0.20145" />
+      <inertia
+        ixx="0.0001117"
+        ixy="9.1303E-11"
+        ixz="6.3367E-09"
+        iyy="0.00011182"
+        iyz="9.9213E-08"
+        izz="0.00016776" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/wrist3_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/arm/wrist3_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j6"
+    type="revolute">
+    <origin
+      xyz="0 0 0.114"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="wrist2_link" />
+    <child
+      link="wrist3_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.0543"
+      upper="3.0543"
+      effort="28"
+      velocity="3.2" />
+    <calibration
+      rising="0"
+      falling="0" />
+    <dynamics
+      damping="0"
+      friction="0" />
+    <safety_controller
+      soft_upper_limit="3.0543261"
+      soft_lower_limit="-3.0543261"
+      k_position="100.0"
+      k_velocity="40.0" />
+  </joint>
+
+  <joint
+    name="gripper_connection_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0.025"
+      rpy="0 0 2.4157" />
+    <parent
+      link="flange" />
+    <child
+      link="gripper_base_link" />
+  </joint>
+
+  <link
+    name="gripper_base_link">
+    <inertial>
+      <origin
+        xyz="-9.70871801089088E-05 4.40138382432753E-09 0.0123998765269589"
+        rpy="0 0 0" />
+      <mass
+        value="0.442727819512088" />
+      <inertia
+        ixx="0.000129710343290443"
+        ixy="7.16836677033689E-07"
+        ixz="-1.54188272956697E-07"
+        iyy="0.000135031169146183"
+        iyz="-1.79194477568909E-11"
+        izz="0.000239830661975378" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/visual/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.615686274509804 0.63921568627451 0.674509803921569 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/visual/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="gripper_body_link">
+    <inertial>
+      <origin
+        xyz="-0.00010889 -1.0503E-06 0.060021"
+        rpy="0 0 0" />
+      <mass
+        value="1.0248" />
+      <inertia
+        ixx="0.0015342"
+        ixy="-3.6868E-08"
+        ixz="-4.7703E-06"
+        iyy="0.0016923"
+        iyz="-1.1668E-08"
+        izz="0.00064041" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/visual/body_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.61569 0.63922 0.67451 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/visual/body_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="gripper_body_joint"
+    type="fixed">
+    <origin
+      xyz="-2.3898E-05 0 0.021"
+      rpy="0 0 0" />
+    <parent
+      link="gripper_base_link" />
+    <child
+      link="gripper_body_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="gripper_left_link">
+    <inertial>
+      <origin
+        xyz="3.7925E-09 -0.016983 -0.00154"
+        rpy="0 0 0" />
+      <mass
+        value="0.054821" />
+      <inertia
+        ixx="8.6451E-06"
+        ixy="2.3299E-12"
+        ixz="1.261E-12"
+        iyy="2.1833E-06"
+        iyz="-1.359E-06"
+        izz="7.8162E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/visual/left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.29804 0.29804 0.29804 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/visual/left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="gripper_left_joint"
+    type="prismatic">
+    <origin
+      xyz="-0.028476 0 0.1457"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="gripper_body_link" />
+    <child
+      link="gripper_left_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.01"
+      upper="0"
+      effort="30"
+      velocity="10" />
+  </joint>
+  <link
+    name="gripper_right_link">
+    <inertial>
+      <origin
+        xyz="3.7925E-09 -0.016983 -0.00154"
+        rpy="0 0 0" />
+      <mass
+        value="0.054821" />
+      <inertia
+        ixx="8.6451E-06"
+        ixy="2.3299E-12"
+        ixz="1.261E-12"
+        iyy="2.1833E-06"
+        iyz="-1.359E-06"
+        izz="7.8162E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/visual/right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.29804 0.29804 0.29804 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file:///home/han/ws_fr/src/fairino16_ctpm2f20_1/meshes/visual/right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="gripper_right_joint"
+    type="prismatic">
+    <origin
+      xyz="0.028524 0 0.1457"
+      rpy="1.5708 0 1.5708" />
+    <parent
+      link="gripper_body_link" />
+    <child
+      link="gripper_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0.01"
+      effort="2"
+      velocity="10" />
+    <mimic
+      joint="gripper_left_joint"
+      multiplier="-1"
+      offset="0" />
+  </joint>
+
+
+
+
+
+  <!-- _____________________________________________-->
+  <!-- 相机-->
+  <!-- ==================== 地面固定深度相机 ==================== -->
+  <link name="camera_link">
+      <visual>
+        <geometry>
+            <box size="0.10 0.06 0.06"/>
+        </geometry>
+        <material name="camera_grey">
+          <color rgba="0.4 0.4 0.4 1.0"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+            <box size="0.10 0.06 0.06"/>
+        </geometry>
+      </collision>
+      <inertial>
+        <mass value="0.1"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="1e-4" iyy="1e-4" izz="1e-4" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+    
+    <joint name="camera_mount_joint" type="fixed">
+      <parent link="world"/>
+      <child link="camera_link"/>
+      <origin xyz="-0.195918 -0.659599 0.768521" rpy="-3.044 0.091 -2.484"/>
+    </joint>
+  
+    <link name="camera_link_optical"/>
+    
+    <joint name="camera_optical_joint" type="fixed">
+      <parent link="camera_link"/>
+      <child link="camera_link_optical"/>
+      <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/> 
+    </joint>
+    
+    <gazebo reference="camera_link">
+      <sensor name="depth_camera" type="depth">
+        <update_rate>30</update_rate>
+        <camera>
+          <horizontal_fov>1.047</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.05</near>
+            <far>5.0</far>
+          </clip>
+        </camera>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <ros2>
+            <namespace>/camera</namespace>
+          </ros2>
+          <camera_name>depth_camera</camera_name>
+          <frame_name>camera_link_optical</frame_name>
+          <depth_camera>true</depth_camera>
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <link name="gripper_center_tcp" />
+
+    <joint name="flange_to_tcp" type="fixed">
+        <parent link="flange"/>
+        <child link="gripper_center_tcp"/>
+        
+        <origin xyz="-0.0001056 -0.0002450 0.2033989" rpy="-3.14 0 -2.0944"/>
+    </joint>
+
+    <link name="flange"/>
+
+    <joint name="wrist3_to_flange" type="fixed">
+      <parent link="wrist3_link"/>
+      <child link="flange"/>
+      <origin xyz="0 0 0.106" rpy="0 0 0"/> 
+    </joint>
+  <!-- ==================== 标定版 ==================== -->
+   <link name="checkerboard_link">
+    <visual>
+      <geometry>
+        <box size="0.08 0.08 0.005"/>
+      </geometry>
+      <material name="black">
+        <color rgba="0 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="gripper_to_checkerboard_joint" type="fixed">
+    <parent link="flange"/>
+    <child link="checkerboard_link"/>
+    
+    <origin xyz="-0.02214 -0.04770 0.22072" rpy="-2.80977 1.53570 1.09409"/> 
+  </joint>
+  </robot>

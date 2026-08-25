@@ -1,0 +1,27 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: my_robot_arm
+    relative_path: config/fairino16_ctpm2f20.urdf
+  srdf:
+    relative_path: config/fairino16_gripper_robot.srdf
+  package_settings:
+    author_name: talia
+    author_email: 2404660174@qq.com
+    generated_timestamp: 1761201367
+  control_xacro:
+    command:
+      - position
+      - velocity
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+      - velocity
+    state:
+      - position
+      - velocity

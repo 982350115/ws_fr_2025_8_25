@@ -1,0 +1,22 @@
+Received signal: 6
+Stack trace (most recent call last):
+#19   Object "[0xffffffffffffffff]", at 0xffffffffffffffff, in 
+#18   Object "/opt/ros/humble/lib/rclcpp_components/component_container", at 0x57e6a67e3774, in 
+#17   Object "/lib/x86_64-linux-gnu/libc.so.6", at 0x7d19f0429e3f, in __libc_start_main
+#16   Object "/lib/x86_64-linux-gnu/libc.so.6", at 0x7d19f0429d8f, in 
+#15   Object "/opt/ros/humble/lib/rclcpp_components/component_container", at 0x57e6a67e35d6, in 
+#14   Object "/opt/ros/humble/lib/librclcpp.so", at 0x7d19f0bd8e3f, in rclcpp::executors::SingleThreadedExecutor::spin()
+#13   Object "/opt/ros/humble/lib/librclcpp.so", at 0x7d19f0bd1420, in rclcpp::Executor::execute_any_executable(rclcpp::AnyExecutable&)
+#12   Object "/home/han/ws_fr/install/orbbec_camera/lib/liborbbec_camera.so", at 0x7d19e9806de3, in 
+#11   Object "/home/han/ws_fr/install/orbbec_camera/lib/liborbbec_camera.so", at 0x7d19e980674e, in orbbec_camera::OBCameraNodeDriver::deviceStatusTimer()
+#10   Object "/home/han/ws_fr/install/orbbec_camera/lib/liborbbec_camera.so", at 0x7d19e9814866, in rclcpp::Publisher<orbbec_camera_msgs::msg::DeviceStatus_<std::allocator<void> >, std::allocator<void> >::do_inter_process_publish(orbbec_camera_msgs::msg::DeviceStatus_<std::allocator<void> > const&)
+#9    Object "/opt/ros/humble/lib/librclcpp.so", at 0x7d19f0bcb518, in rclcpp::exceptions::throw_from_rcl_error(int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, rcutils_error_state_s const*, void (*)())
+#8    Object "/lib/x86_64-linux-gnu/libstdc++.so.6", at 0x7d19f08ae1fd, in std::rethrow_exception(std::__exception_ptr::exception_ptr)
+#7    Object "/lib/x86_64-linux-gnu/libstdc++.so.6", at 0x7d19f08ae276, in std::terminate()
+#6    Object "/lib/x86_64-linux-gnu/libstdc++.so.6", at 0x7d19f08ae20b, in 
+#5    Object "/lib/x86_64-linux-gnu/libstdc++.so.6", at 0x7d19f08a2b9d, in 
+#4    Object "/lib/x86_64-linux-gnu/libc.so.6", at 0x7d19f04287f2, in abort
+#3    Object "/lib/x86_64-linux-gnu/libc.so.6", at 0x7d19f0442475, in raise
+#2    Object "/lib/x86_64-linux-gnu/libc.so.6", at 0x7d19f04969fc, in pthread_kill
+#1    Object "/lib/x86_64-linux-gnu/libc.so.6", at 0x7d19f044251f, in 
+#0    Object "/home/han/ws_fr/install/orbbec_camera/lib/liborbbec_camera.so", at 0x7d19e98002f1, in signalHandler(int)

@@ -1,0 +1,38 @@
+planning_pipelines:
+  ompl:
+    planning_plugin: ompl_interface/OMPLPlanner
+    request_adapters: >-
+      default_planner_request_adapters/AddTimeOptimalParameterization
+      default_planner_request_adapters/ResolveConstraintFrames
+      default_planner_request_adapters/FixWorkspaceBounds
+      default_planner_request_adapters/FixStartStateBounds
+      default_planner_request_adapters/FixStartStateCollision
+      default_planner_request_adapters/FixStartStatePathConstraints
+    start_state_max_bounds_error: 0.1
+    
+    # 使用 ompl_planning.yaml 中实际存在的规划器配置
+    planner_configs:
+      - AnytimePathShortening
+      - SBL
+      - EST
+      - LBKPIECE
+      - BKPIECE
+      - KPIECE
+      - RRT
+      - RRTConnect
+      - RRTstar
+      - TRRT
+      - PRM
+      - PRMstar
+      - FMT
+      - BFMT
+      - PDST
+      - STRIDE
+      - BiTRRT
+      - LBTRRT
+      - BiEST
+      - ProjEST
+      - LazyPRM
+      - LazyPRMstar
+      - SPARS
+      - SPARStwo

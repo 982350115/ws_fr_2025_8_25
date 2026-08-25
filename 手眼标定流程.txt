@@ -1,0 +1,16 @@
+1.打印标定纸，布置实验环境
+2.在工作空间下输入colcon build
+  source install/setup.bash
+3.确认相机是否成功连接
+  在工作空间中输入
+  ros2 launch orbbec_camera gemini2.launch.py
+  启动相机，同时启动rviz2,在topic中添加相机话题，观察是否有图像
+4.打开机械臂电源，新开一个终端，输入：
+  ros2 launch fairino16_ctpm2f20_1 demo_sim.launch.py
+  启动机械臂仿真
+5.输入
+python3 01_collect_data.py
+运行采集数据脚本，每次采集确保坐标纸被正确识别，同时改变机械臂位姿，按下enter记录数据，同时要启动相机不然没有话题
+6.输入
+  python3 04_find_best_calibration.py
+运算采集到的数据

@@ -1,0 +1,29 @@
+robot_calibration:
+  ros__parameters:
+    chains:
+      - arm_chain
+    features:
+      - checkerboard_finder
+
+    arm_chain:
+      # [cite_start]手动模式下，程序主要监听 /joint_states 话题来获取角度 [cite: 5]
+      # 仍需保留 topic 以满足包的结构要求，但程序不会通过它发送指令
+      topic: /manipulator_controller/follow_joint_trajectory 
+      joints:
+        - j1
+        - j2
+        - j3
+        - j4
+        - j5
+        - j6
+
+    checkerboard_finder:
+      # 建议使用 2D 模式以获得更高精度
+      type: robot_calibration::CheckerboardFinder2d
+      topic: /camera/depth_camera/image_raw 
+      camera_sensor_name: camera
+      chain_sensor_name: arm_chain
+      points_x: 5
+      points_y: 4
+      size: 0.025
+      debug: true
