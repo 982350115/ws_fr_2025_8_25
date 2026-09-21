@@ -18,6 +18,8 @@
 
 // Author: Michael Ferguson
 
+#include <algorithm>
+#include <cmath>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <robot_calibration/util/capture_manager.hpp>
@@ -34,6 +36,9 @@ CaptureManager::CaptureManager()
 
 bool CaptureManager::init(rclcpp::Node::SharedPtr node)
 {
+  node_ptr_ = node;
+  required_joints_ = node->declare_parameter<std::vector<std::string>>(
+    "required_joints", std::vector<std::string>());
   // Publish calibration data (to be recorded by rosbag)
   data_pub_ = node->create_publisher<robot_calibration_msgs::msg::CalibrationData>("/calibration_data", 10);
 
@@ -83,7 +88,22 @@ bool CaptureManager::captureFeatures(const std::vector<std::string>& feature_nam
       }
     }
   }
-  chain_manager_->getState(&msg.joint_states);
+  if (!chain_manager_->getState(&msg.joint_states) || msg.joint_states.name.empty())
+  {
+    RCLCPP_ERROR(LOGGER, "No valid joint state; sample discarded");
+    return false;
+  }
+  for (const auto& joint : required_joints_)
+  {
+    const auto it = std::find(msg.joint_states.name.begin(), msg.joint_states.name.end(), joint);
+    const auto index = std::distance(msg.joint_states.name.begin(), it);
+    if (it == msg.joint_states.name.end() ||
+        !std::isfinite(msg.joint_states.position[index]))
+    {
+      RCLCPP_ERROR(LOGGER, "Missing or invalid joint %s; sample discarded", joint.c_str());
+      return false;
+    }
+  }
   // Publish calibration data message.
   data_pub_->publish(msg);
   return true;
@@ -97,10 +117,15 @@ void CaptureManager::callback(std_msgs::msg::String::ConstSharedPtr msg)
 
 std::string CaptureManager::getUrdf()
 {
+  auto node = node_ptr_.lock();
+  if (!node)
+    return std::string();
+  if (!description_valid_)
+    RCLCPP_INFO(LOGGER, "Waiting for robot_description");
   while (!description_valid_ && rclcpp::ok())
   {
-    RCLCPP_WARN(LOGGER, "Waiting for robot_description");
-    rclcpp::sleep_for(std::chrono::seconds(5));
+    rclcpp::spin_some(node);
+    rclcpp::sleep_for(std::chrono::milliseconds(100));
   }
   return description_;
 }

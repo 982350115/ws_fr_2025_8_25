@@ -64,6 +64,19 @@ TEST(CameraInfoTests, test_extended_camera_info)
   EXPECT_EQ(eci.parameters[1].value, 1.1);
 }
 
+TEST(CameraInfoTests, test_extended_camera_info_without_depth_driver)
+{
+  rclcpp::NodeOptions options;
+  options.parameter_overrides({rclcpp::Parameter("rgb_manager.read_driver_parameters", false)});
+  auto node = std::make_shared<rclcpp::Node>("rgb_camera_info_tests", options);
+  robot_calibration::DepthCameraInfoManager manager;
+  ASSERT_TRUE(manager.init("rgb_manager", node, node->get_logger()));
+  const auto info = manager.getDepthCameraInfo();
+  ASSERT_EQ(static_cast<size_t>(2), info.parameters.size());
+  EXPECT_DOUBLE_EQ(0.0, info.parameters[0].value);
+  EXPECT_DOUBLE_EQ(1.0, info.parameters[1].value);
+}
+
 int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);

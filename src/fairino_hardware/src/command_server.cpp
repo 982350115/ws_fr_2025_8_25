@@ -2,8 +2,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "fairino_hardware/version_control.h"
+#include <stdexcept>
 
-std::atomic_bool _reconnect_flag;
 std::atomic<int> mainerrcode;
 std::atomic<int> suberrcode;
 
@@ -2560,15 +2560,22 @@ std::string robot_command_thread::WeldingAbortWeldAfterBreakOff(std::string para
  */
 robot_recv_thread::robot_recv_thread(const std::string node_name):rclcpp::Node(node_name){
     using namespace std::chrono_literals;
-    _controller_ip = CONTROLLER_IP;//控制器默认ip地址
+    _controller_ip = this->declare_parameter<std::string>("robot_ip", CONTROLLER_IP);
+    port1 = this->declare_parameter<int>("state_port", 8081);
+    if (port1 < 1 || port1 > 65535) {
+        throw std::invalid_argument("state_port must be in the range 1..65535");
+    }
     RCLCPP_INFO(rclcpp::get_logger(LOGGER_NAME),msgout[msg_id(create_state_feedback)]);
+    RCLCPP_INFO(
+        rclcpp::get_logger(LOGGER_NAME),
+        "Passive feedback endpoint: %s:%d", _controller_ip.c_str(), port1);
 
     //只保留8081端口的连接，8083连接传输的数据已经不用
     _socketfd1 = socket(AF_INET,SOCK_STREAM,0);//状态获取端口只有TCP
 
     if(_socketfd1 == -1){
         RCLCPP_INFO(rclcpp::get_logger(LOGGER_NAME),msgout[msg_id(socket_create_failed)]);
-        exit(0);//创建套字失败,丢出错误
+        throw std::runtime_error("Failed to create Fairino feedback socket");
     }else{
         RCLCPP_INFO(rclcpp::get_logger(LOGGER_NAME),msgout[msg_id(socket_create_success)]);
         struct sockaddr_in tcp_client1;
@@ -2581,7 +2588,11 @@ robot_recv_thread::robot_recv_thread(const std::string node_name):rclcpp::Node(n
         int res1 = connect(_socketfd1,(struct sockaddr *)&tcp_client1,sizeof(tcp_client1));
         if(0 != res1){
             RCLCPP_INFO(rclcpp::get_logger(LOGGER_NAME),msgout[msg_id(socket_connect_failed)]);
-            exit(0);//连接失败,丢出错误并返回
+            close(_socketfd1);
+            _socketfd1 = -1;
+            throw std::runtime_error(
+                "Failed to connect to Fairino feedback endpoint " +
+                _controller_ip + ":" + std::to_string(port1));
         }else{
             RCLCPP_INFO(rclcpp::get_logger(LOGGER_NAME),msgout[msg_id(socket_connect_success)]);
             //将socket设置成非阻塞模式
@@ -2597,6 +2608,8 @@ robot_recv_thread::robot_recv_thread(const std::string node_name):rclcpp::Node(n
                 "nonrt_state_data",
                 1
             );
+            _joint_state_publisher = this->create_publisher<sensor_msgs::msg::JointState>(
+                "joint_states", rclcpp::SensorDataQoS());
             _locktimer = this->create_wall_timer(10ms,std::bind(&robot_recv_thread::_state_recv_callback,this));//创建一个定时器任务用于获取非实时状态数据,触发间隔为100ms
         }
 
@@ -2666,23 +2679,22 @@ void robot_recv_thread::_try_to_reconnect(){
     };
 
     _reconnect_thread = std::thread(_reconnect_func);
-    _reconnect_thread.detach();
 }
 
 /**
  * @brief 状态监控节点类的析构函数
  */
 robot_recv_thread::~robot_recv_thread(){
-    //关闭并销毁socket
-    if(_socketfd1 != -1){
-        shutdown(_socketfd1,SHUT_RDWR);
-        close(_socketfd1);
-    }
-
     _robot_recv_exit = 1;
     if(_reconnect_thread.joinable()){
         _reconnect_thread.join();
         RCLCPP_INFO(rclcpp::get_logger(LOGGER_NAME),msgout[msg_id(keep_alive_exit)]);
+    }
+
+    // 等重连守护线程退出后再关闭 socket，避免析构时访问已销毁对象。
+    if(_socketfd1 != -1){
+        shutdown(_socketfd1,SHUT_RDWR);
+        close(_socketfd1);
     }
 }
 
@@ -3028,5 +3040,17 @@ void robot_recv_thread::_state_recv_callback(){
         }
 
         _state_publisher->publish(msg);
+
+        // The controller reports degrees. ROS joint positions are radians.
+        constexpr double degrees_to_radians = 0.017453292519943295;
+        sensor_msgs::msg::JointState joint_state;
+        joint_state.header.stamp = this->now();
+        joint_state.name = {"j1", "j2", "j3", "j4", "j5", "j6"};
+        joint_state.position.reserve(6);
+        for (int i = 0; i < 6; ++i) {
+            joint_state.position.push_back(
+                ctrl_state.jt_cur_pos[i] * degrees_to_radians);
+        }
+        _joint_state_publisher->publish(joint_state);
     }
 }

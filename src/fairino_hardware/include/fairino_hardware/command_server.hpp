@@ -7,6 +7,7 @@
 #include "fairino_msgs/srv/remote_script_content.hpp"
 #include "fairino_msgs/srv/remote_cmd_interface.hpp"
 #include "fairino_msgs/msg/robot_nonrt_state.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 #include "mutex"
 #include "sys/socket.h"
 #include "sys/types.h"
@@ -326,7 +327,7 @@ public:
 private:
     int setKeepAlive(int fd, int idle_time, int interval_time, int probe_times);
     int _socketfd1;
-    std::atomic_bool _reconnect_flag;
+    std::atomic_bool _reconnect_flag{false};
     int _robot_recv_exit = 0;           //类即将析构，通知重连线程退出.
     std::thread _reconnect_thread;
     void _try_to_reconnect();
@@ -334,6 +335,7 @@ private:
     std::string _controller_ip;
     void _state_recv_callback();
     rclcpp::Publisher<robot_feedback_msg>::SharedPtr _state_publisher;//进程内通信，用于发送状态数据字符串
+    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr _joint_state_publisher;
     rclcpp::TimerBase::SharedPtr _locktimer;
     int port1 = 8081;//非实时状态数据获取端口
 

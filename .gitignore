@@ -1,0 +1,21 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# ROS / colcon generated output
+build/
+install/
+log/
+
+# Editor and OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.swp
+*.swo
+*~

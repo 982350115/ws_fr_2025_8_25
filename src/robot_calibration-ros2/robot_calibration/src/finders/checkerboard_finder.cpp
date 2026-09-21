@@ -19,6 +19,7 @@
 // Author: Michael Ferguson
 
 #include <robot_calibration/finders/checkerboard_finder.hpp>
+#include <opencv2/imgproc.hpp>
 #include <sensor_msgs/point_cloud2_iterator.hpp>
 
 static const rclcpp::Logger LOGGER = rclcpp::get_logger("checkerboard_finder");
@@ -348,8 +349,15 @@ bool CheckerboardFinder<T>::findCheckerboardPoints(sensor_msgs::msg::Image::Cons
   // Find checkerboard
   points.resize(points_x_ * points_y_);
   cv::Size checkerboard_size(points_x_, points_y_);
-  return cv::findChessboardCorners(bridge->image, checkerboard_size,
-                                   points, cv::CALIB_CB_ADAPTIVE_THRESH);
+  if (!cv::findChessboardCorners(bridge->image, checkerboard_size,
+                                  points, cv::CALIB_CB_ADAPTIVE_THRESH))
+  {
+    return false;
+  }
+  cv::cornerSubPix(bridge->image, points, cv::Size(5, 5), cv::Size(-1, -1),
+                  cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER,
+                                   30, 0.001));
+  return true;
 }
 
 }  // namespace robot_calibration

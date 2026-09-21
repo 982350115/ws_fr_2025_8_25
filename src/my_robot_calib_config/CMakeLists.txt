@@ -7,11 +7,26 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.launch.py"
+)
+install(DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}
+  FILES_MATCHING PATTERN "*.yaml"
+  PATTERN "build" EXCLUDE
+  PATTERN "install" EXCLUDE
+  PATTERN "log" EXCLUDE
+)
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(eye_in_hand_config test/test_eye_in_hand_config.py)
+  ament_add_pytest_test(teach_capture_config test/test_teach_capture_config.py)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files

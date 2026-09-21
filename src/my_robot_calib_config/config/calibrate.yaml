@@ -1,55 +1,45 @@
 robot_calibration:
   ros__parameters:
-    base_link: base_link
+    base_link: world
     calibration_steps:
       - calibrate_system
 
     calibrate_system:
       models:
-        - arm_chain
+        - board
         - camera
 
-      arm_chain:
+      board:
         type: chain3d
         frame: checkerboard_link
 
-      # ⚠️ 修改处 1: 模型类型改为 camera2d
       camera:
-        type: camera2d #
+        type: camera2d
         frame: camera_link_optical
 
-      free_params:
-        - j1
-        - j2
-        - j3
-        - j4
-        - j5
-        - j6
-
-      free_frames:
-        # ⚠️ 修改点 2: 加入标定板的 link，允许算法修正它的位置
-        # 这就是“手-板标定”：算出标定板相对于夹爪的精确位置
-        - name: checkerboard_link
-          x: true
-          y: true
-          z: true
-          roll: true
-          pitch: true
-          yaw: true
-        
-        # 你的相机外参（眼在手外）
-        - name: camera_link
-          x: true
-          y: true
-          z: true
-          roll: true
-          pitch: true
-          yaw: true
+      # 不设置 free_params，使用代码默认的空字符串列表。
+      # 本轮只优化手眼外参和固定标定板位姿，保持关节零位与内参固定。
+      # 必须填写 joint 名称；解析器要求“名称列表 + 同级参数块”。
+      free_frames: [camera_mount_joint, world_to_checkerboard_joint]
+      camera_mount_joint:
+        x: true
+        y: true
+        z: true
+        roll: true
+        pitch: true
+        yaw: true
+      world_to_checkerboard_joint:
+        x: true
+        y: true
+        z: true
+        roll: true
+        pitch: true
+        yaw: true
 
       error_blocks:
         - hand_eye_error
       hand_eye_error:
-        type: chain3d_to_camera2d #
-        model_2d: camera      # 你的 camera2d 模型名
-        model_3d: arm_chain   # 你的 chain3d 模型名
-        scale: 1.0            # 误差缩放比例 (通常设为1.0即可)
+        type: chain3d_to_camera2d
+        model_2d: camera
+        model_3d: board
+        scale: 1.0

@@ -1,0 +1,12 @@
+# Enter measured estimates before launching. null is intentionally not runnable.
+# xyz: [x, y, z] in metres; rpy: [roll, pitch, yaw] in radians (URDF convention).
+# These are absolute joint origins, not the optimizer's correction offsets.
+camera_mount_joint:
+  # Pose of camera_link expressed in flange, NOT the RGB optical frame pose.
+  xyz: null
+  rpy: null
+world_to_checkerboard_joint:
+  # Pose of the first detected inner corner expressed in world.
+  # +X follows corner columns; +Y follows corner rows; +Z = +X cross +Y.
+  xyz: null
+  rpy: null

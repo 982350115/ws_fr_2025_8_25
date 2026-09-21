@@ -1,16 +1,89 @@
-1.打印标定纸，布置实验环境
-2.在工作空间下输入colcon build
-  source install/setup.bash
-3.确认相机是否成功连接
-  在工作空间中输入
-  ros2 launch orbbec_camera gemini2.launch.py
-  启动相机，同时启动rviz2,在topic中添加相机话题，观察是否有图像
-4.打开机械臂电源，新开一个终端，输入：
-  ros2 launch fairino16_ctpm2f20_1 demo_sim.launch.py
-  启动机械臂仿真
-5.输入
-python3 01_collect_data.py
-运行采集数据脚本，每次采集确保坐标纸被正确识别，同时改变机械臂位姿，按下enter记录数据，同时要启动相机不然没有话题
-6.输入
-  python3 04_find_best_calibration.py
-运算采集到的数据
+眼在手上（Eye-in-Hand）手眼标定流程
+
+适用条件：相机刚性安装在末端法兰，ArUco 标定板固定在工作台或世界坐标系中。
+01_collect_data.py 采集 T_world_flange 与 T_camera_marker；
+04_find_best_calibration.py 求解 T_flange_camera，并估计 T_world_marker。
+
+1. 准备标定板
+   固定 ArUco DICT_4X4_250、ID=0 的标定板，整个采集过程中不得移动。
+   用尺测量黑色方块边长，并填写 src/2025_12/01_collect_data.py 的 MARKER_SIZE。
+
+2. 编译并加载工作区
+   colcon build --symlink-install
+   source install/setup.bash
+
+   Python 环境需要带 ArUco 和 calibrateHandEye 的 OpenCV 4.x。
+   已验证 OpenCV 4.10；OpenCV 5.0 的 Python 包不再提供 calibrateHandEye。
+   python3 src/2025_12/check_versions.py
+
+3. 启动相机
+   ros2 launch orbbec_camera gemini2.launch.py
+   检查：
+   ros2 topic echo /camera/color/camera_info --once
+   ros2 topic hz /camera/color/image_raw
+
+4. 启动真实机械臂反馈及 TF
+   启动只读的示教采集 launch（默认控制器 IP 为 192.168.58.2）：
+   ros2 launch my_robot_calib_config teach_capture.launch.py
+
+   如果 IP 不同：
+   ros2 launch my_robot_calib_config teach_capture.launch.py robot_ip:=<机械臂IP>
+
+   该 launch 只连接 8081 状态反馈端口，发布 /joint_states 和机械臂 TF。
+   它不启动指令服务、ros2_control、轨迹控制器、MoveIt 或演示运动节点，
+   因此不会通过 ServoJ 与拖动示教争抢机械臂控制权。
+   不要同时启动 circle_task.launch.py 或 ros2_cmd_server。
+
+   检查只读状态：
+   ros2 topic echo /joint_states --once
+   ros2 topic hz /joint_states
+
+   检查法兰 TF：
+   ros2 run tf2_ros tf2_echo world flange
+
+   还必须存在 camera_link 到彩色图像消息 header.frame_id 的固定 TF。
+   可先查看实际光学坐标系名称：
+   ros2 topic echo /camera/color/image_raw --once --field header.frame_id
+   再检查：
+   ros2 run tf2_ros tf2_echo camera_link <实际彩色光学坐标系>
+
+5. 采集新数据
+   cd <工作区>/src/2025_12
+   python3 01_collect_data.py
+
+   每次移动机械臂后等待完全静止，确保 ID=0 标记完整可见，再按 Enter。
+   如果拖动模式下释放后关节仍柔软、位姿会慢慢漂移，应先退出拖动模式让伺服稳定保持，
+   再等待 1-2 秒采集；不要在手还接触机械臂时记录。
+   脚本会检查最近 0.75 秒内的关节角及 ArUco 位姿稳定性；不稳定时拒绝记录。
+   每个样本同时保存六关节角（弧度）、world -> flange、camera -> marker 和时间同步误差。
+   本轮目标采集 45 组，改变距离、画面位置，并绕至少两个不同轴明显旋转。
+   按 q 保存。旧 calibration_data.json 会先备份。
+   新样本带有 mode=eye_in_hand、图像时间戳及相机内部 TF 标记。
+
+6. 求解和比较算法
+   python3 04_find_best_calibration.py
+
+   脚本比较 Tsai、Park、Horaud、Andreff、Daniilidis，使用逐样本留出误差选择结果，输出：
+   - eye_in_hand_calibration_result.json
+   - fairino16_eye_in_hand_calibrated.urdf
+   - flange -> camera_link
+   - world -> checkerboard_link（ArUco 中心）
+
+   旧数据没有 eye_in_hand 标记时会被拒绝。只有确认旧数据确实是在相机随法兰运动、
+   标定板固定的条件下采集，才可使用 --allow-legacy-data；眼在手外的旧数据必须重新采集。
+
+7. 应用补偿
+   先用生成的 fairino16_eye_in_hand_calibrated.urdf 检查 TF 树和独立验证点。
+   确认有效后，将其中 camera_mount_joint、camera_optical_joint、
+   world_to_checkerboard_joint 的 parent/child/origin 合并到实际运行的 URDF/xacro。
+   camera_mount_joint 必须是 flange -> camera_link，不能再是 world -> camera_link。
+   相机安装 TF 只能由一个节点发布。
+
+8. 独立验证
+   使用未参与求解的新姿态，比较补偿前后的标定板世界坐标波动及实际抓取误差。
+   训练数据一致性下降不等于完成 TCP、深度尺度或机器人绝对精度标定。
+
+另一条 robot_calibration 联合优化流程见：
+src/my_robot_calib_config/README.md
+两条流程可用于交叉检查，但 ArUco 中心和棋盘格第一个内角点是不同的标定板坐标原点，
+不能直接比较 world -> target 的平移数值。

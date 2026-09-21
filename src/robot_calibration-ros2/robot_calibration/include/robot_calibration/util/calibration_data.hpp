@@ -62,7 +62,8 @@ inline bool hasSensor(
  */
 inline bool load_bag(const std::string& file_name,
                      std_msgs::msg::String& description_msg,
-                     std::vector<robot_calibration_msgs::msg::CalibrationData>& data)
+                     std::vector<robot_calibration_msgs::msg::CalibrationData>& data,
+                     const std::string& description_topic = "/robot_description")
 {
   rosbag2_cpp::Reader reader;
   
@@ -74,7 +75,7 @@ inline bool load_bag(const std::string& file_name,
   {
     auto bag_message = reader.read_next();
 
-    if (bag_message->topic_name == "/robot_description")
+    if (bag_message->topic_name == description_topic)
     {
       rclcpp::SerializedMessage extracted_serialized_msg(*bag_message->serialized_data);
       rclcpp::Serialization<std_msgs::msg::String> serialization;

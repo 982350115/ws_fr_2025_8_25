@@ -135,7 +135,11 @@ int main(int argc, char** argv)
         // Manual calibration, wait for keypress
         RCLCPP_INFO(logger, "Press [Enter] to capture a sample... (or type 'done' and [Enter] to finish capture)");
         std::string throwaway;
-        std::getline(std::cin, throwaway);
+        if (!std::getline(std::cin, throwaway))
+        {
+          RCLCPP_ERROR(logger, "Manual capture requires an interactive terminal; stdin closed");
+          return -1;
+        }
         if (throwaway.compare("done") == 0)
           break;
         if (throwaway.compare("exit") == 0)
@@ -190,11 +194,22 @@ int main(int argc, char** argv)
       data_bag_name = argv[2];
     RCLCPP_INFO(logger, "Loading calibration data from %s", data_bag_name.c_str());
 
-    if (!robot_calibration::load_bag(data_bag_name, description_msg, data))
+    if (!robot_calibration::load_bag(
+          data_bag_name, description_msg, data,
+          node->get_node_topics_interface()->resolve_topic_name("/robot_description")))
     {
       // Error will have been printed in function
       return -1;
     }
+  }
+
+  const int min_samples = node->declare_parameter<int>("min_samples", 1);
+  if (min_samples < 1 || data.size() < static_cast<size_t>(min_samples) ||
+      description_msg.data.empty())
+  {
+    RCLCPP_ERROR(logger, "Need a non-empty URDF and at least %d samples; got %zu samples",
+                 min_samples, data.size());
+    return -1;
   }
 
   // Create instance of optimizer
@@ -214,7 +229,12 @@ int main(int argc, char** argv)
   for (auto step : calibration_steps)
   {
     params.LoadFromROS(node, step);
-    opt.optimize(params, data, logger, verbose);
+    if (opt.optimize(params, data, logger, verbose) != 0 || !opt.summary() ||
+        !opt.summary()->IsSolutionUsable() || opt.getNumResiduals() == 0)
+    {
+      RCLCPP_ERROR(logger, "Optimization failed; no calibration result will be exported");
+      return -1;
+    }
     if (verbose)
     {
       std::cout << "Parameter Offsets:" << std::endl;

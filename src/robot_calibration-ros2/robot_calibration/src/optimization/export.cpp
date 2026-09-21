@@ -18,6 +18,7 @@
 
 // Author: Michael Ferguson
 
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <camera_calibration_parsers/parse.hpp>
@@ -110,8 +111,11 @@ bool exportResults(Optimizer& optimizer, const std::string& initial_urdf,
     std::ofstream file;
     file.open(yaml_name.str().c_str());
     file << optimizer.getOffsets()->getOffsetYAML();
-    file << "depth_info: depth_" << datecode << ".yaml" << std::endl;
-    file << "rgb_info: rgb_" << datecode << ".yaml" << std::endl;
+    if (std::find(camera_names.begin(), camera_names.end(), "camera") != camera_names.end())
+    {
+      file << "depth_info: depth_" << datecode << ".yaml" << std::endl;
+      file << "rgb_info: rgb_" << datecode << ".yaml" << std::endl;
+    }
     file << "urdf: calibrated_" << datecode << ".urdf" << std::endl;
     file.close();
   }

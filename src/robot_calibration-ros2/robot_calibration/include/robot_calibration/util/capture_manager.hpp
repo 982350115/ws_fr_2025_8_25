@@ -44,6 +44,8 @@ private:
 
   rclcpp::Publisher<robot_calibration_msgs::msg::CalibrationData>::SharedPtr data_pub_;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr urdf_sub_;
+  rclcpp::Node::WeakPtr node_ptr_;
+  std::vector<std::string> required_joints_;
   std::string description_;
   bool description_valid_;
 

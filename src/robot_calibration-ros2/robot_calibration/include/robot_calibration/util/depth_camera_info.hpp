@@ -42,7 +42,8 @@ public:
     std::string topic_name =
       node->declare_parameter<std::string>(name + ".camera_info_topic", "/head_camera/depth/camera_info");
     camera_info_subscriber_ = node->create_subscription<sensor_msgs::msg::CameraInfo>(
-      topic_name, 1, std::bind(&DepthCameraInfoManager::cameraInfoCallback, this, std::placeholders::_1));
+      topic_name, rclcpp::QoS(1).best_effort(),
+      std::bind(&DepthCameraInfoManager::cameraInfoCallback, this, std::placeholders::_1));
 
     // Set default driver parameters
     z_offset_mm_ = 0;
@@ -51,27 +52,32 @@ public:
     // Get parameters of drivers
     std::string driver_name =
       node->declare_parameter<std::string>(name + ".camera_driver", "/head_camera/driver");
-    auto params_client = std::make_shared<rclcpp::SyncParametersClient>(node, driver_name);
-    if (params_client->wait_for_service(std::chrono::seconds(10)))
+    const bool read_driver_parameters =
+      node->declare_parameter<bool>(name + ".read_driver_parameters", true);
+    if (read_driver_parameters)
     {
-      auto parameters = params_client->get_parameters({"z_offset_mm", "z_scaling"});
-      for (auto& param : parameters)
+      auto params_client = std::make_shared<rclcpp::SyncParametersClient>(node, driver_name);
+      if (params_client->wait_for_service(std::chrono::seconds(10)))
       {
-        if (param.get_name() == "z_offset_mm")
+        auto parameters = params_client->get_parameters({"z_offset_mm", "z_scaling"});
+        for (auto& param : parameters)
         {
-          z_offset_mm_ = param.as_int();
-          RCLCPP_INFO(node->get_logger(), "Got value of %f for z_offset_mm", z_offset_mm_);
-        }
-        else if (param.get_name() == "z_scaling")
-        {
-          z_scaling_ = param.as_double();
-          RCLCPP_INFO(node->get_logger(), "Got value of %f for z_scaling", z_scaling_);
+          if (param.get_name() == "z_offset_mm")
+          {
+            z_offset_mm_ = param.as_int();
+            RCLCPP_INFO(node->get_logger(), "Got value of %f for z_offset_mm", z_offset_mm_);
+          }
+          else if (param.get_name() == "z_scaling")
+          {
+            z_scaling_ = param.as_double();
+            RCLCPP_INFO(node->get_logger(), "Got value of %f for z_scaling", z_scaling_);
+          }
         }
       }
-    }
-    else
-    {
-      RCLCPP_WARN(node->get_logger(), "Unable to get parameters from %s", driver_name.c_str());
+      else
+      {
+        RCLCPP_WARN(node->get_logger(), "Unable to get parameters from %s", driver_name.c_str());
+      }
     }
 
     // Wait for camera_info
