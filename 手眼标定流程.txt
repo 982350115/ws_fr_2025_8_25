@@ -1,89 +1,218 @@
-眼在手上（Eye-in-Hand）手眼标定流程
+棋盘格眼在手上标定与独立误差验证（2026-09-23）
 
-适用条件：相机刚性安装在末端法兰，ArUco 标定板固定在工作台或世界坐标系中。
-01_collect_data.py 采集 T_world_flange 与 T_camera_marker；
-04_find_best_calibration.py 求解 T_flange_camera，并估计 T_world_marker。
+本轮实测使用 src/2025_12/calib_data_bz/trial01/，已保存45组并完成固定30/15划分。
+输出 baseline_report.json、compensated.json/.npy、comparison_report.json 均在该目录；
+下面的 session01 是以后新实验的示例目录，不能代替本轮实际路径。
+本轮15组验证中，原矩阵平移RMSE 0.709 mm/旋转RMSE 0.2848度，
+新矩阵平移RMSE 0.785 mm/旋转RMSE 0.2689度；平移误差未改善，暂不应用新矩阵。
 
-1. 准备标定板
-   固定 ArUco DICT_4X4_250、ID=0 的标定板，整个采集过程中不得移动。
-   用尺测量黑色方块边长，并填写 src/2025_12/01_collect_data.py 的 MARKER_SIZE。
+本流程的采集入口：src/2025_12/eye_in_hand_collector_bz.py
+本流程的求解入口：src/2025_12/eye_in_hand_solve_bz.py
+本流程的评估入口：src/2025_12/error.py
+旧的 01_collect_data.py 为 ArUco 流程，本次不使用。
 
-2. 编译并加载工作区
-   colcon build --symlink-install
-   source install/setup.bash
+一、坐标约定与实验目标
 
-   Python 环境需要带 ArUco 和 calibrateHandEye 的 OpenCV 4.x。
-   已验证 OpenCV 4.10；OpenCV 5.0 的 Python 包不再提供 calibrateHandEye。
-   python3 src/2025_12/check_versions.py
+相机刚性安装在法兰，棋盘格固定在工作台。整个实验过程中不得改变相机安装、
+棋盘格位置、相机焦距/分辨率/裁剪方式或相机内参。
+用户确认的棋盘格：11 列 × 8 行内角点，格长 5 mm（0.005 m），共 88 个内角点。
+这里指内角点，不是黑白方格数量；相邻极端内角点范围为 50 mm × 35 mm。
+用直尺复核打印比例；棋盘格应平整、完整可见、有白边，角点不能过小或模糊。
 
-3. 启动相机
-   ros2 launch orbbec_camera gemini2.launch.py
-   检查：
-   ros2 topic echo /camera/color/camera_info --once
-   ros2 topic hz /camera/color/image_raw
+矩阵 T_A_B 表示将 B 系坐标转换到 A 系：
+T_world_board(i) = T_world_flange(q_i) × T_flange_camera × T_camera_board(i)
+robot_pose 来自图像时间戳对应的 URDF world -> flange TF，不取 TCP 位姿。
+当前 URDF 的 world -> base_link 为单位变换，所以 world 与基座重合。
+若以后改变 world_to_base，报告将是 world 坐标；基座坐标需再乘 T_base_world。
 
-4. 启动真实机械臂反馈及 TF
-   启动只读的示教采集 launch（默认控制器 IP 为 192.168.58.2）：
-   ros2 launch my_robot_calib_config teach_capture.launch.py
+棋盘格原点必须全程对应同一个物理内角点：
+在白边靠近一个极端内角点的位置做笔迹标记，不要涂改角点。
+每个姿态稳定后，在程序画面点击这个物理内角点，然后按 S。
+程序会重排 88 个角点，将所选点设为原点；
++X 沿 11 列方向，+Y 沿 8 行方向，+Z 按右手定则。
+红色 ORIGIN 应始终贴近同一物理标记。
+点击确认5秒有效，画面明显移动/检测失败/每次采样后需重新确认。
+普通棋盘格的角点起点可能翻转；PnP误差很小也不能证明原点一致。
+新增点击确认需要人工正确辨认标记，并非自动识别笔迹。
 
-   如果 IP 不同：
-   ros2 launch my_robot_calib_config teach_capture.launch.py robot_ip:=<机械臂IP>
+本轮“补偿”重新估计刚性的 T_flange_camera（手眼外参）。
+不修改 URDF 的连杆长度、关节零偏或机器人 DH 参数；若目标是机器人运动学参数标定，
+还需设计另一套模型与可观测性实验，不能把手眼外参更新等同于机器人绝对精度修正。
 
-   该 launch 只连接 8081 状态反馈端口，发布 /joint_states 和机械臂 TF。
-   它不启动指令服务、ros2_control、轨迹控制器、MoveIt 或演示运动节点，
-   因此不会通过 ServoJ 与拖动示教争抢机械臂控制权。
-   不要同时启动 circle_task.launch.py 或 ros2_cmd_server。
+二、启动前准备
 
-   检查只读状态：
-   ros2 topic echo /joint_states --once
-   ros2 topic hz /joint_states
+以下示例在克隆后的仓库根目录执行：
 
-   检查法兰 TF：
-   ros2 run tf2_ros tf2_echo world flange
+每个终端先执行：
+cd <克隆后的仓库目录>
+source /opt/ros/humble/setup.bash
+source install/setup.bash
 
-   还必须存在 camera_link 到彩色图像消息 header.frame_id 的固定 TF。
-   可先查看实际光学坐标系名称：
-   ros2 topic echo /camera/color/image_raw --once --field header.frame_id
-   再检查：
-   ros2 run tf2_ros tf2_echo camera_link <实际彩色光学坐标系>
+初次使用只读 launch 或修改其 C++ 节点后才需要编译：
+colcon build --symlink-install --packages-select fairino_hardware my_robot_calib_config
+source install/setup.bash
 
-5. 采集新数据
-   cd <工作区>/src/2025_12
-   python3 01_collect_data.py
+采集需要：rclpy、tf2_ros、cv_bridge、sensor_msgs、NumPy、带GUI的 OpenCV。
+求解需要 OpenCV 的 cv2.calibrateHandEye；本流程不依赖 cv2.aruco 或 fairino Python SDK。
 
-   每次移动机械臂后等待完全静止，确保 ID=0 标记完整可见，再按 Enter。
-   如果拖动模式下释放后关节仍柔软、位姿会慢慢漂移，应先退出拖动模式让伺服稳定保持，
-   再等待 1-2 秒采集；不要在手还接触机械臂时记录。
-   脚本会检查最近 0.75 秒内的关节角及 ArUco 位姿稳定性；不稳定时拒绝记录。
-   每个样本同时保存六关节角（弧度）、world -> flange、camera -> marker 和时间同步误差。
-   本轮目标采集 45 组，改变距离、画面位置，并绕至少两个不同轴明显旋转。
-   按 q 保存。旧 calibration_data.json 会先备份。
-   新样本带有 mode=eye_in_hand、图像时间戳及相机内部 TF 标记。
+检查 Python 依赖：
+python3 -c "import cv2, numpy, rclpy, cv_bridge; print('OpenCV', cv2.__version__); assert hasattr(cv2, 'calibrateHandEye')"
 
-6. 求解和比较算法
-   python3 04_find_best_calibration.py
+三、启动相机与只读机器人反馈
 
-   脚本比较 Tsai、Park、Horaud、Andreff、Daniilidis，使用逐样本留出误差选择结果，输出：
-   - eye_in_hand_calibration_result.json
-   - fairino16_eye_in_hand_calibrated.urdf
-   - flange -> camera_link
-   - world -> checkerboard_link（ArUco 中心）
+终端1：相机（先 source 相机驱动实际所在工作区，如有独立相机工作区）
+ros2 pkg prefix orbbec_camera
+ros2 launch orbbec_camera gemini2.launch.py
 
-   旧数据没有 eye_in_hand 标记时会被拒绝。只有确认旧数据确实是在相机随法兰运动、
-   标定板固定的条件下采集，才可使用 --allow-legacy-data；眼在手外的旧数据必须重新采集。
+若提示 Package not found，必须先安装/编译或 source 驱动；Tool/gemini2.launch.py
+本身不是驱动。2026-09-23续验时，本工作区已有 Orbbec 驱动源码，加载
+install/setup.bash 后 ros2 pkg prefix orbbec_camera 可解析；但当前执行环境
+未暴露相机USB/视频设备，尚未验证出图。包可解析不能代替图像和CameraInfo检查。
+确认提供彩色原始图像、对应分辨率的 CameraInfo 和 camera_link -> 彩色光学系 TF。
+本脚本使用 raw + K + D；不要把 image_rect 配上 raw 畸变参数。
 
-7. 应用补偿
-   先用生成的 fairino16_eye_in_hand_calibrated.urdf 检查 TF 树和独立验证点。
-   确认有效后，将其中 camera_mount_joint、camera_optical_joint、
-   world_to_checkerboard_joint 的 parent/child/origin 合并到实际运行的 URDF/xacro。
-   camera_mount_joint 必须是 flange -> camera_link，不能再是 world -> camera_link。
-   相机安装 TF 只能由一个节点发布。
+终端2：只读反馈，IP按实际配置
+ros2 launch my_robot_calib_config teach_capture.launch.py robot_ip:=192.168.58.2
 
-8. 独立验证
-   使用未参与求解的新姿态，比较补偿前后的标定板世界坐标波动及实际抓取误差。
-   训练数据一致性下降不等于完成 TCP、深度尺度或机器人绝对精度标定。
+该 launch 发布六关节 /joint_states 和 URDF 机器人 TF，启动时不发送运动指令。
+本轮只读节点只解析8081反馈帧中已经与示教器核对的六关节位置；
+若控制器帧长度与旧完整状态结构不同，只提示一次并继续按实际帧长度安全收包。
+本节点不发布旧的 /nonrt_state_data；如修改或重新编译了节点，须停止旧launch后重启，
+且不要同时运行两个 /joint_states 发布者。
+示教/拖动模式仍由示教器操作。采集时不要并行运行 circle_task.launch.py、
+ros2_control 控制器、其他运动程序、假关节发布器或另一套相同机器人TF。
 
-另一条 robot_calibration 联合优化流程见：
-src/my_robot_calib_config/README.md
-两条流程可用于交叉检查，但 ArUco 中心和棋盘格第一个内角点是不同的标定板坐标原点，
-不能直接比较 world -> target 的平移数值。
+检查（可单独终端，持续命令 Ctrl+C 结束）：
+ros2 topic echo /joint_states --once
+ros2 topic hz /joint_states
+ros2 run tf2_ros tf2_echo world flange
+ros2 topic echo /camera/color/camera_info --once
+ros2 topic hz /camera/color/image_raw
+ros2 topic echo /camera/color/image_raw --once --field header.frame_id
+ros2 run tf2_ros tf2_echo camera_link <上一条显示的彩色光学坐标系>
+
+先将六关节数值与示教器对照，ROS为弧度，示教器通常为度。
+单独改变一个关节时，相应 j1..j6 的变化方向、数量级应一致。
+若状态帧版本不匹配或关节数据异常，先解决反馈问题再采样。
+当前只读节点的关节时间戳是主机收到反馈的时间，非控制器曝光同步时间；
+图像须使用兼容的ROS时间，程序的时间门槛不能消除网络/相机固定延迟。
+静止后采样用于减轻这些延迟的影响。
+
+四、采集45组新数据
+
+终端3（在工作区根目录）：
+python3 src/2025_12/eye_in_hand_collector_bz.py \
+  --columns 11 --rows 8 --square-size 0.005 \
+  --output src/2025_12/calib_data_bz/session01
+
+session01 必须是新目录；已有目录会拒绝启动，避免覆盖。下一轮改成 session02。
+不指定 --output 会生成按时间命名的新目录。
+相机与机器人 frame/topic 不同可用 --help 查看参数覆盖。
+
+每一组：
+1. 通过示教器进入拖动模式并改变姿态。
+2. 松手后等待稳定；若拖动模式下仍漂移，按设备正常操作退出拖动并保持静止。
+3. 等约1–2秒，让完整棋盘格清晰可见，点击同一物理原点旁的极端内角点。
+4. 图像窗口获得焦点后按小写 s。控制台显示“已保存”才算成功。
+5. 改变姿态再采下一组；按小写 q 退出，每次成功采样已经落盘。
+
+初始质量门槛：
+- 图像年龄不超过1秒，不能为零时间戳或重复帧。
+- 最近0.75秒窗口内至少5个观测，覆盖至少0.5秒，相邻数据间隔不超过0.25秒。
+- 六关节各自变化范围不超过0.1度。
+- 棋盘格PnP平移变化不超过5 mm，旋转变化不超过2度。
+- 图像与最近关节反馈时间差不超过100 ms，并获取图像时间点法兰TF。
+- 每张图像的PnP角点拟合RMSE默认不超过1像素（--max-pnp-rmse 可调整）。
+- 若六关节均与某个已保存姿态相差不到0.5度，拒绝近重复样本。
+这些值是初始采样门槛，不代表毫米级最终精度或硬件安全判定。
+若频繁拒绝，应先检查可见角点大小、抖动、照明、畸变和反馈频率。
+
+45组应覆盖不同距离、画面区域与绕至少两个轴的明显转动，
+不要只平移或只绕一个轴转动。求解会拒绝旋转跨度不足20度或旋转轴退化的数据。
+每组保持同一物理原点、完整棋盘格可见；不在手仍施力时记录。
+
+输出：
+session01/samples.json：数据清单（图像文件名、关节角、法兰TF、棋盘格PnP、88个角点、
+                       物体点坐标、内参、图像时间戳、frame和质量指标）
+session01/img_0001.png ...：与记录对应的原始图像
+不再分别glob图片与pose文件，也不由当前目录决定数据存储位置。
+旧 calib_data_bz/img_*.png + pose_*.npy 缺少同步与原点确认，不能自动视为合格新数据。
+
+五、先评价未补偿误差并固定30/15划分
+
+保留工作区根目录原始 T_cam_to_flange.npy，不要覆盖。
+必须先确认它满足：
+P_flange = T_flange_camera_optical × P_camera_optical
+文件名不能保证矩阵方向。若是相机本体系外参，使用 --baseline-frame body；
+若矩阵实际方向相反，明确追加 --baseline-invert。不能为了降低误差尝试各种方向后选最小值。
+
+python3 src/2025_12/error.py \
+  --data src/2025_12/calib_data_bz/session01/samples.json \
+  --baseline T_cam_to_flange.npy --baseline-frame optical \
+  --report src/2025_12/calib_data_bz/session01/baseline_report.json
+
+程序要求恰好45组，使用种子42随机划分30组训练、15组验证。
+在数据目录写出 training.json、validation.json、split.json。
+split.json 保存数据、基准矩阵的内容指纹与样本索引；
+后续修改数据、基准矩阵/方向、种子或划分会报错。
+第一份 baseline_report.json 留作补偿前报告。
+
+六、只用30组训练数据求解手眼外参
+
+python3 src/2025_12/eye_in_hand_solve_bz.py \
+  --input src/2025_12/calib_data_bz/session01/training.json \
+  --result src/2025_12/calib_data_bz/session01/compensated.json
+
+求解会验证训练集角色和数据指纹，拒绝直接输入全部45组或 validation.json。
+比较Tsai、Park、Horaud、Andreff、Daniilidis，
+仅在30组训练集内部做留一交叉验证来选算法，再用全部30组训练样本拟合。
+打印的 training-only LOO 是内部选型误差，不是15组独立验证误差。
+数值函数复用 04_find_best_calibration.py；本次入口始终是 eye_in_hand_solve_bz.py。
+
+输出：
+compensated.json：矩阵、棋盘格位姿、方法选择指标、训练来源指纹
+compensated.npy：T_flange_camera_optical，单位米；与基准文件分开保存
+需要离线查看修正后的URDF时，可在上述命令中追加：
+  --output-urdf src/2025_12/calib_data_bz/session01/compensated.urdf
+导出不自动替换机器人正在运行的模型。不要将其中相机内部TF与相机驱动重复发布。
+棋盘格原点为选定的内角点，和旧 ArUco 中心不相同，旧板位姿不能直接拿来作真值。
+
+七、使用同一15组验证集比较补偿前后
+
+python3 src/2025_12/error.py \
+  --data src/2025_12/calib_data_bz/session01/samples.json \
+  --baseline T_cam_to_flange.npy --baseline-frame optical \
+  --compensated src/2025_12/calib_data_bz/session01/compensated.json \
+  --report src/2025_12/calib_data_bz/session01/comparison_report.json
+
+棋盘格流程需传带训练来源的 compensated.json；不接受无来源的补偿.npy代替。
+程序会确认补偿结果来自同一个冻结训练集。验证集不参与算法选择或拟合。
+不要反复根据这15组验证结果调参/删点；若如此使用，它们就不再是独立验证，
+应另采一组未使用的新姿态作为最终测试集。
+
+报告包含：
+- 平移 MAE、RMSE、最大误差（mm）及XYZ偏差/标准差；
+- 旋转 RMSE、最大误差（度）；
+- 88个角点的独立闭环重投影RMSE（像素）；
+- 每个验证样本的误差与补偿改善比例（负数表示变差）。
+
+没有外部真值时，各个候选手眼矩阵用30组训练数据估计其固定棋盘格参考位姿，
+再把15组观测与这个训练参考比较。因此报告衡量跨姿态一致性，
+不能检测全部共同固定偏差，不能据此宣称机器人“绝对精度2 mm”或满足某项抓取需求。
+
+闭环像素误差使用：
+T_camera_board_pred = inverse(T_world_flange × T_flange_camera) × T_world_board_reference
+把整个88角点投影回图像，与实测角点比较。
+采集画面中的PnP拟合误差只衡量单张图像角点拟合质量，两者含义不同。
+
+若有独立测量、且原点/轴方向与本棋盘格约定一致的 T_world_board 真值.npy，
+可在评估命令追加 --ground-truth /绝对路径/T_world_board.npy，计算相对该真值的误差。
+真值不能用同一手眼标定结果反推，否则不独立。
+
+八、离线回归检查（不连接机械臂）
+
+python3 src/2025_12/test_checkerboard_workflow.py
+python3 src/2025_12/test_eye_in_hand_calibration.py
+
+测试验证已知真值下的PnP/手眼方向、88角点投影、30/15隔离、基准文件保留、
+原点重排及划分被修改时的拒绝逻辑。实机相机/机械臂连接仍需现场验证。

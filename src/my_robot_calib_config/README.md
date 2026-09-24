@@ -4,6 +4,28 @@
 本流程优化相机安装外参和标定板位姿；关节零位、TCP 和相机内参保持固定。
 它需要真实采样才能产生补偿值，修改配置本身不会消除实际定位误差。
 
+## 已采45组棋盘格数据的离线视觉补偿
+
+`src/2025_12/calib_data_bz/trial01/` 已有11×8内角点、5 mm格长的45组原始图像、角点、关节角和法兰位姿，并固定划分为30组训练/15组验证。本目录的在线 `capture.yaml` 仍配置5×4内角点、25 mm格长，且 `robot_calibration calibrate` 读取ROS采集消息，不能直接将 `samples.json` 传给它。不要用在线配置解释这45组数据。
+
+为复用已存数据，`offline_visual_compensate.py` 按本包 `calibrate.yaml` 的两个自由安装位姿，在固定机器人几何与相机内参的条件下，最小化训练30组的原始棋盘角点重投影误差。它直接拟合彩色光学系到法兰的变换及固定棋盘格到世界的变换，数学目标与在线包相近，但不是在线 `robot_calibration` 程序的逐行复现。它不使用验证15组、也不改URDF或控制器。
+
+在工作区根目录运行：
+
+```bash
+python3 src/my_robot_calib_config/offline_visual_compensate.py \
+  --training src/2025_12/calib_data_bz/trial01/training.json \
+  --baseline T_cam_to_flange.npy \
+  --result src/2025_12/calib_data_bz/trial01/visual_joint_compensated.json
+python3 src/2025_12/error.py \
+  --data src/2025_12/calib_data_bz/trial01/samples.json \
+  --baseline T_cam_to_flange.npy --baseline-frame optical \
+  --compensated src/2025_12/calib_data_bz/trial01/visual_joint_compensated.json \
+  --report src/2025_12/calib_data_bz/trial01/visual_joint_comparison_report.json
+```
+
+本轮结果已生成；脚本保护现有结果，复跑时须另选新文件名。固定15组验证集上，像素闭环RMSE由2.656 px降至1.479 px，但标定板平移一致性RMSE由0.709 mm升至0.776 mm，旋转RMSE由0.2848°降至0.2725°。这是一个视觉像素拟合更好的候选外参，尚不能证明实际三维定位更准。若用于正式补偿，先在新姿态和独立实测点验证；不要覆盖原基准矩阵。
+
 ## 本次修改
 
 | 文件 | 用途 |

@@ -18,6 +18,7 @@ held-out validation subset.
 """
 
 import argparse
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -27,14 +28,16 @@ import xml.etree.ElementTree as ET
 import cv2
 import numpy as np
 
+from checkerboard_common import atomic_json, content_hash, validate_checkerboard_records
+
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 WORKSPACE_ROOT = SCRIPT_DIR.parent.parent
-DEFAULT_DATA = SCRIPT_DIR / "calibration_data.json"
+DEFAULT_DATA = SCRIPT_DIR / "calib_data_bz/session01/samples.json"
 DEFAULT_BASELINE = WORKSPACE_ROOT / "T_cam_to_flange.npy"
-DEFAULT_TRAIN_OUTPUT = SCRIPT_DIR / "error_training_data.json"
-DEFAULT_VALIDATION_OUTPUT = SCRIPT_DIR / "error_validation_data.json"
-DEFAULT_REPORT = SCRIPT_DIR / "error_report.json"
+DEFAULT_TRAIN_OUTPUT = SCRIPT_DIR / "calib_data_bz/session01/training.json"
+DEFAULT_VALIDATION_OUTPUT = SCRIPT_DIR / "calib_data_bz/session01/validation.json"
+DEFAULT_REPORT = SCRIPT_DIR / "calib_data_bz/session01/error_report.json"
 
 
 def make_transform(rotation, translation):
@@ -128,22 +131,30 @@ def parse_observation(raw):
     observation = raw.get("observation")
     if not isinstance(observation, dict):
         return None
-    required = ("corners_px", "camera_matrix", "dist_coeffs", "marker_size_m")
+    required = ("corners_px", "camera_matrix", "dist_coeffs")
     if any(key not in observation for key in required):
         return None
     corners = np.asarray(observation["corners_px"], dtype=np.float64).reshape(-1, 2)
     camera_matrix = np.asarray(observation["camera_matrix"], dtype=np.float64).reshape(3, 3)
     dist_coeffs = np.asarray(observation["dist_coeffs"], dtype=np.float64).reshape(-1)
-    marker_size = float(observation["marker_size_m"])
-    if corners.shape != (4, 2) or marker_size <= 0.0:
-        raise ValueError("pixel observation must contain four corners and a positive marker size")
-    if not np.all(np.isfinite(corners)) or not np.all(np.isfinite(camera_matrix)):
+    if observation.get("target_type") == "checkerboard":
+        points = np.asarray(observation["object_points_m"], dtype=np.float64)
+    else:
+        marker_size = float(observation["marker_size_m"])
+        if marker_size <= 0 or corners.shape != (4, 2):
+            raise ValueError("ArUco observation needs four corners and positive marker size")
+        points = marker_object_points(marker_size)
+    if points.shape != (len(corners), 3) or len(corners) < 4:
+        raise ValueError("Object/pixel point counts do not match")
+    if (not all(np.all(np.isfinite(v)) for v in (corners, camera_matrix, dist_coeffs, points))
+            or camera_matrix[0, 0] <= 0 or camera_matrix[1, 1] <= 0
+            or dist_coeffs.size not in (0, 4, 5, 8, 12, 14)):
         raise ValueError("pixel observation contains non-finite values")
     return {
         "corners_px": corners,
         "camera_matrix": camera_matrix,
         "dist_coeffs": dist_coeffs,
-        "marker_size_m": marker_size,
+        "object_points_m": points,
     }
 
 
@@ -154,7 +165,10 @@ def load_samples(path, allow_legacy):
         raise ValueError("data must be a JSON list or an object containing a samples list")
 
     samples = []
-    frame_values = {name: set() for name in ("world", "gripper", "camera", "camera_body")}
+    if any(isinstance(s, dict) and s.get("observation", {}).get("target_type") == "checkerboard"
+           for s in raw_samples):
+        validate_checkerboard_records(raw_samples)
+    frame_values = {name: set() for name in ("world", "gripper", "camera", "camera_body", "target")}
     for sample_number, raw in enumerate(raw_samples, start=1):
         if not isinstance(raw, dict):
             raise ValueError(f"sample {sample_number}: expected an object")
@@ -309,9 +323,13 @@ def pixel_error(sample, flange_to_camera, world_to_marker):
         return None
     world_to_camera = sample["world_to_flange"] @ flange_to_camera
     camera_to_marker = np.linalg.inv(world_to_camera) @ world_to_marker
+    camera_points = (observation["object_points_m"] @ camera_to_marker[:3, :3].T
+                     + camera_to_marker[:3, 3])
+    if np.any(camera_points[:, 2] <= 0.0):
+        return None
     rvec = cv2.Rodrigues(camera_to_marker[:3, :3])[0]
     predicted, _ = cv2.projectPoints(
-        marker_object_points(observation["marker_size_m"]),
+        observation["object_points_m"],
         rvec,
         camera_to_marker[:3, 3],
         observation["camera_matrix"],
@@ -372,6 +390,7 @@ def evaluate(name, flange_to_camera, training_samples, validation_samples, groun
                 else float(np.sqrt(np.mean(np.square(available_pixel_errors))))
             ),
             "pixel_samples_evaluated": int(available_pixel_errors.size),
+            "pixel_samples_unavailable": len(pixel_errors) - int(available_pixel_errors.size),
         },
         "per_sample": per_sample,
     }
@@ -385,7 +404,7 @@ def improvement_percent(before, after):
 
 def print_result(result):
     metrics = result["metrics"]
-    print(f"\n=== {result['name']}（仅15组验证集）===")
+    print(f"\n=== {result['name']}（仅{len(result['per_sample'])}组验证集）===")
     print(f"参考标定板位姿: {result['reference_type']}")
     print(f"平移 MAE:       {metrics['translation_mae_mm']:.3f} mm")
     print(f"平移 RMSE:      {metrics['translation_rmse_mm']:.3f} mm")
@@ -396,6 +415,8 @@ def print_result(result):
         print("像素重投影 RMSE: N/A（样本没有角点/内参字段）")
     else:
         print(f"像素重投影 RMSE: {metrics['pixel_reprojection_rmse_px']:.3f} px")
+    if metrics["pixel_samples_unavailable"]:
+        print(f"像素未评估样本: {metrics['pixel_samples_unavailable']}（缺观测或预测角点在相机后方）")
 
 
 def parse_args():
@@ -416,22 +437,48 @@ def parse_args():
     parser.add_argument("--validation-count", type=int, default=15)
     parser.add_argument("--split-mode", choices=("random", "sequential"), default="random")
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--train-output", type=Path, default=DEFAULT_TRAIN_OUTPUT)
-    parser.add_argument("--validation-output", type=Path, default=DEFAULT_VALIDATION_OUTPUT)
-    parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
+    parser.add_argument("--split-file", type=Path, help="persistent split manifest; default beside data")
+    parser.add_argument("--train-output", type=Path, help="default: training.json beside --data")
+    parser.add_argument("--validation-output", type=Path, help="default: validation.json beside --data")
+    parser.add_argument("--report", type=Path, help="default: error_report.json beside --data")
     parser.add_argument("--allow-legacy-data", action="store_true")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    args.train_output = args.train_output or args.data.with_name("training.json")
+    args.validation_output = args.validation_output or args.data.with_name("validation.json")
+    args.report = args.report or args.data.with_name("error_report.json")
     try:
         if args.train_count < 2 or args.validation_count < 1:
             raise ValueError("train-count must be at least 2 and validation-count at least 1")
         raw_samples, samples, frames = load_samples(args.data, args.allow_legacy_data)
+        is_checkerboard = bool(raw_samples and
+            raw_samples[0].get("observation", {}).get("target_type") == "checkerboard")
         train_indices, validation_indices = split_samples(
             samples, args.train_count, args.validation_count, args.seed, args.split_mode
         )
+        split_document = {
+            "dataset_sha256": content_hash(raw_samples),
+            "baseline_sha256": hashlib.sha256(args.baseline.read_bytes()).hexdigest(),
+            "baseline_frame": args.baseline_frame,
+            "baseline_invert": args.baseline_invert,
+            "seed": args.seed, "mode": args.split_mode,
+            "training_indices": train_indices, "validation_indices": validation_indices,
+        }
+        split_id = content_hash(split_document)
+        split_path = args.split_file or args.data.with_name("split.json")
+        if split_path.exists():
+            previous = json.loads(split_path.read_text(encoding="utf-8"))
+            if previous != split_document:
+                raise ValueError("Dataset, baseline or split changed. Use a new experiment directory; do not reuse validation data.")
+        outputs = [split_path, args.train_output, args.validation_output, args.report]
+        protected = [args.data, args.baseline]
+        protected += [p for p in (args.compensated, args.ground_truth) if p is not None]
+        if (len({p.resolve() for p in outputs}) != len(outputs)
+                or {p.resolve() for p in outputs} & {p.resolve() for p in protected}):
+            raise ValueError("Output paths must be distinct and cannot overwrite input files")
         training_samples = [samples[index] for index in train_indices]
         validation_samples = [samples[index] for index in validation_indices]
         body_to_optical = get_body_to_optical(samples)
@@ -455,6 +502,15 @@ def main():
         compensated_result = None
         compensated_source_frame = None
         if args.compensated is not None:
+            if is_checkerboard:
+                if args.compensated.suffix.lower() != ".json":
+                    raise ValueError("For checkerboard validation pass compensated.json with training provenance")
+                model_document = json.loads(args.compensated.read_text(encoding="utf-8"))
+                provenance = model_document.get("training_provenance", {})
+                training_raw = [raw_samples[index] for index in train_indices]
+                if (provenance.get("split_id") != split_id
+                        or provenance.get("training_sha256") != content_hash(training_raw)):
+                    raise ValueError("Compensated model was not trained on this frozen training subset")
             compensated, compensated_source_frame = load_camera_transform(
                 args.compensated,
                 args.compensated_frame,
@@ -469,16 +525,17 @@ def main():
         args.train_output.parent.mkdir(parents=True, exist_ok=True)
         args.validation_output.parent.mkdir(parents=True, exist_ok=True)
         args.report.parent.mkdir(parents=True, exist_ok=True)
-        args.train_output.write_text(
-            json.dumps([raw_samples[index] for index in train_indices], indent=2, ensure_ascii=False),
-            encoding="utf-8",
-        )
-        args.validation_output.write_text(
-            json.dumps(
-                [raw_samples[index] for index in validation_indices], indent=2, ensure_ascii=False
-            ),
-            encoding="utf-8",
-        )
+        split_path.parent.mkdir(parents=True, exist_ok=True)
+        atomic_json(split_path, split_document)
+        for path, indices, role in (
+            (args.train_output, train_indices, "training"),
+            (args.validation_output, validation_indices, "validation"),
+        ):
+            selected = [raw_samples[index] for index in indices]
+            output = ({"schema_version": 2, "role": role, "split_id": split_id,
+                       "samples_sha256": content_hash(selected), "samples": selected}
+                      if is_checkerboard else selected)
+            atomic_json(path, output)
 
         comparison = None
         if compensated_result is not None:
@@ -501,6 +558,8 @@ def main():
             "transform_convention": "p_flange = T_flange_camera @ p_camera",
             "frames": frames,
             "split": {
+                "split_id": split_id,
+                "manifest": str(split_path.resolve()),
                 "mode": args.split_mode,
                 "seed": args.seed,
                 "training_indices_1_based": [index + 1 for index in train_indices],
@@ -538,7 +597,7 @@ def main():
         if ground_truth is None:
             print("注意: 当前是固定标定板的一致性误差，不包含独立绝对真值误差。")
         return 0
-    except (OSError, ValueError, json.JSONDecodeError, ET.ParseError, np.linalg.LinAlgError) as exc:
+    except (OSError, ValueError, KeyError, TypeError, cv2.error, ET.ParseError, np.linalg.LinAlgError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
 

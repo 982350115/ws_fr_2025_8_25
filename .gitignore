@@ -8,6 +8,7 @@ __pycache__/
 build/
 install/
 log/
+.local_ros_deps/
 
 # Editor and OS metadata
 .vscode/

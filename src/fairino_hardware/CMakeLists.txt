@@ -27,18 +27,17 @@ file(GLOB EXP_SRC_DIR ./examples/src/*.cpp)
 
 #compile
 file(CREATE_LINK 
-"${CMAKE_CURRENT_SOURCE_DIR}/libfairino/lib/libfairino.so.2.2.4"
+"libfairino.so.2.2.4"
 "${CMAKE_CURRENT_SOURCE_DIR}/libfairino/lib/libfairino.so.2"
 SYMBOLIC)
 
 file(CREATE_LINK 
-"${CMAKE_CURRENT_SOURCE_DIR}/libfairino/lib/libfairino.so.2"
+"libfairino.so.2"
 "${CMAKE_CURRENT_SOURCE_DIR}/libfairino/lib/libfairino.so"
 SYMBOLIC)
 
 add_executable(ros2_cmd_server ${SRC_DIR})
 add_executable(fairino_passive_state_publisher
-  ./src/command_server.cpp
   ./src/passive_state_node.cpp
 )
 add_executable(srv_test_client ${EXP_SRC_DIR})
@@ -67,13 +66,11 @@ $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
 $<INSTALL_INTERFACE:include/fairino_hardware>
 )
 target_link_libraries(ros2_cmd_server ${CMAKE_CURRENT_SOURCE_DIR}/libfairino/lib/libfairino.so)
-target_link_libraries(fairino_passive_state_publisher
-  ${CMAKE_CURRENT_SOURCE_DIR}/libfairino/lib/libfairino.so)
 target_link_libraries(fairino_hardware ${CMAKE_CURRENT_SOURCE_DIR}/libfairino/lib/libfairino.so)
 
 #add dependencies
 ament_target_dependencies(ros2_cmd_server rclcpp fairino_msgs sensor_msgs)
-ament_target_dependencies(fairino_passive_state_publisher rclcpp fairino_msgs sensor_msgs)
+ament_target_dependencies(fairino_passive_state_publisher rclcpp sensor_msgs)
 ament_target_dependencies(srv_test_client rclcpp fairino_msgs)
 ament_target_dependencies(fairino_hardware 
   hardware_interface
@@ -115,12 +112,12 @@ file(COPY_FILE "libfairino/lib/libfairino.so.2.2.4"
 )
 
 file(CREATE_LINK 
-"${CMAKE_INSTALL_PREFIX}/lib/libfairino.so.2.2.4" 
+"libfairino.so.2.2.4" 
 "${CMAKE_INSTALL_PREFIX}/lib/libfairino.so.2" 
 SYMBOLIC)
 
 file(CREATE_LINK 
-"${CMAKE_INSTALL_PREFIX}/lib/libfairino.so.2" 
+"libfairino.so.2" 
 "${CMAKE_INSTALL_PREFIX}/lib/libfairino.so" 
 SYMBOLIC)
 
@@ -128,7 +125,10 @@ SYMBOLIC)
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   find_package(ament_cmake_gmock REQUIRED)
+  find_package(ament_cmake_gtest REQUIRED)
   find_package(hardware_interface REQUIRED)
+  ament_add_gtest(test_passive_frame_parser test/test_passive_frame_parser.cpp)
+  target_include_directories(test_passive_frame_parser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/)
   # the following line skips the linter which checks for copyrights
   # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)

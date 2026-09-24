@@ -5,7 +5,7 @@ import json
 import numpy as np
 import cv2
 from scipy.spatial.transform import Rotation as R
-import os
+from pathlib import Path
 
 def get_transform_matrix_quat(translation, quat):
     """
@@ -28,9 +28,9 @@ def get_transform_matrix_rvec(translation, rvec):
     return T
 
 def main():
-    json_path = '/home/han/ws_fr/src/2025_12/calibration_data.json'
+    json_path = Path(__file__).with_name('calibration_data.json')
     
-    if not os.path.exists(json_path):
+    if not json_path.exists():
         print(f"找不到 JSON 数据文件: {json_path}")
         return
 
