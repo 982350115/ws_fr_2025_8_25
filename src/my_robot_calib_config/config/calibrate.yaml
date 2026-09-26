@@ -1,0 +1,45 @@
+robot_calibration:
+  ros__parameters:
+    base_link: world
+    calibration_steps:
+      - calibrate_system
+
+    calibrate_system:
+      models:
+        - board
+        - camera
+
+      board:
+        type: chain3d
+        frame: checkerboard_link
+
+      camera:
+        type: camera2d
+        frame: camera_link_optical
+
+      # 不设置 free_params，使用代码默认的空字符串列表。
+      # 本轮只优化手眼外参和固定标定板位姿，保持关节零位与内参固定。
+      # 必须填写 joint 名称；解析器要求“名称列表 + 同级参数块”。
+      free_frames: [camera_mount_joint, world_to_checkerboard_joint]
+      camera_mount_joint:
+        x: true
+        y: true
+        z: true
+        roll: true
+        pitch: true
+        yaw: true
+      world_to_checkerboard_joint:
+        x: true
+        y: true
+        z: true
+        roll: true
+        pitch: true
+        yaw: true
+
+      error_blocks:
+        - hand_eye_error
+      hand_eye_error:
+        type: chain3d_to_camera2d
+        model_2d: camera
+        model_3d: board
+        scale: 1.0
