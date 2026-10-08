@@ -1,0 +1,180 @@
+{
+  "question": "Is the fixed checkerboard consistent with its old placement?",
+  "method": "T_world_board = recorded_T_world_flange * fixed_T_flange_camera_optical * observed_T_camera_board. Compare old 45-pose mean with 6 new poses without refitting to new data.",
+  "sample_counts": {
+    "old": 45,
+    "new": 6,
+    "combined": 51
+  },
+  "common_calibration_and_frames": true,
+  "origin_index_values": [
+    87
+  ],
+  "comparisons": {
+    "original_T_cam_to_flange": {
+      "matrix_file": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/T_cam_to_flange.npy",
+      "matrix_sha256": "357e4942aa1d7b081aa6592c719df1a558f07d61d51fb62db5f983b6e911af81",
+      "old_reference_translation_m": [
+        -0.34706502519754884,
+        -0.4715123976946612,
+        0.04398776647129336
+      ],
+      "new_mean_minus_old_mean_xyz_mm": [
+        0.03030792271963012,
+        0.3389608874075911,
+        -0.15329280973046255
+      ],
+      "new_mean_minus_old_mean_translation_mm": 0.37324487791097755,
+      "new_mean_minus_old_mean_rotation_deg": 0.3590147782855125,
+      "old_relative_to_old_mean": {
+        "translation_median_mm": 0.5917403974414036,
+        "translation_max_mm": 3.271784944055576,
+        "translation_rmse_mm": 0.9088450122689593,
+        "rotation_median_deg": 0.25391519296002657,
+        "rotation_max_deg": 0.7516390984452267
+      },
+      "new_relative_to_old_mean": {
+        "translation_median_mm": 0.40276010998600653,
+        "translation_max_mm": 1.3905237425446886,
+        "translation_rmse_mm": 0.7197307173342423,
+        "rotation_median_deg": 0.3474739043280064,
+        "rotation_max_deg": 2.1278546644408496
+      },
+      "new_per_sample": [
+        {
+          "sample_id": "trial02_j6:0001",
+          "j6_deg": -147.35081481933594,
+          "translation_xyz_from_old_mean_mm": [
+            -0.33399542171924645,
+            0.18092803536612356,
+            0.13085941424297032
+          ],
+          "translation_norm_from_old_mean_mm": 0.4017612251162074,
+          "rotation_from_old_mean_deg": 0.21852147806865319,
+          "pnp_reprojection_rmse_px": 0.2739152099723045
+        },
+        {
+          "sample_id": "trial02_j6_02:0001",
+          "j6_deg": -107.4752197265625,
+          "translation_xyz_from_old_mean_mm": [
+            -0.009517978431294871,
+            0.8268401734582986,
+            -0.2536634173784663
+          ],
+          "translation_norm_from_old_mean_mm": 0.8649279702230065,
+          "rotation_from_old_mean_deg": 0.45709639474796737,
+          "pnp_reprojection_rmse_px": 0.18584700429666973
+        },
+        {
+          "sample_id": "trial02_j6_02:0002",
+          "j6_deg": -62.88595962524415,
+          "translation_xyz_from_old_mean_mm": [
+            0.4972595281213521,
+            1.1495941498075868,
+            -0.6039226200443143
+          ],
+          "translation_norm_from_old_mean_mm": 1.3905237425446886,
+          "rotation_from_old_mean_deg": 0.7452281137592469,
+          "pnp_reprojection_rmse_px": 0.12104111888173719
+        },
+        {
+          "sample_id": "trial02_j6_02:0003",
+          "j6_deg": -126.07888031005861,
+          "translation_xyz_from_old_mean_mm": [
+            0.07112314661650299,
+            0.16619510914556157,
+            -0.20378716432602195
+          ],
+          "translation_norm_from_old_mean_mm": 0.27241241644348513,
+          "rotation_from_old_mean_deg": 0.13021341456602195,
+          "pnp_reprojection_rmse_px": 0.2670731629926943
+        },
+        {
+          "sample_id": "trial02_j6_02:0004",
+          "j6_deg": -160.92881774902344,
+          "translation_xyz_from_old_mean_mm": [
+            -0.11036064108199684,
+            0.10401054819852984,
+            0.06911991600970502
+          ],
+          "translation_norm_from_old_mean_mm": 0.16665901723512203,
+          "rotation_from_old_mean_deg": 0.23785141390804537,
+          "pnp_reprojection_rmse_px": 0.3140628877169339
+        },
+        {
+          "sample_id": "trial02_j6_02:0005",
+          "j6_deg": -179.4730987548828,
+          "translation_xyz_from_old_mean_mm": [
+            0.06733890281235277,
+            -0.3938026915304982,
+            -0.05836298688667585
+          ],
+          "translation_norm_from_old_mean_mm": 0.4037589948558057,
+          "rotation_from_old_mean_deg": 2.1278546644408496,
+          "pnp_reprojection_rmse_px": 0.7039769702797023
+        }
+      ]
+    },
+    "trial01_handeye_fit": {
+      "matrix_file": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/compensated.npy",
+      "matrix_sha256": "a2811b8498554927cb9ea704c9bcfca372c5d385acef8eac68fa6f696b73b384",
+      "old_reference_translation_m": [
+        -0.3485611702328469,
+        -0.47059641959634685,
+        0.045418021573461816
+      ],
+      "new_mean_minus_old_mean_xyz_mm": [
+        0.37869533124545995,
+        0.11243570406299641,
+        -0.15912881979696786
+      ],
+      "new_mean_minus_old_mean_translation_mm": 0.4258801741631397,
+      "new_mean_minus_old_mean_rotation_deg": 0.30587469852304766,
+      "old_relative_to_old_mean": {
+        "translation_median_mm": 0.5916357009170369,
+        "translation_max_mm": 2.9149306172507248,
+        "translation_rmse_mm": 0.8654672580903164,
+        "rotation_median_deg": 0.23111762633639907,
+        "rotation_max_deg": 0.6025468356723427
+      },
+      "new_relative_to_old_mean": {
+        "translation_median_mm": 1.1590749821620494,
+        "translation_max_mm": 3.3324264435533992,
+        "translation_rmse_mm": 1.6914042116148122,
+        "rotation_median_deg": 0.22034347166747115,
+        "rotation_max_deg": 1.6015261585396503
+      }
+    },
+    "trial01_visual_fit": {
+      "matrix_file": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/visual_joint_compensated.npy",
+      "matrix_sha256": "5e49d6f086f4c0c8aa9f210f135e559de0d2b28e22902ccf17126eb68b6e167e",
+      "old_reference_translation_m": [
+        -0.34628565486019264,
+        -0.4692009016420451,
+        0.043875888491296006
+      ],
+      "new_mean_minus_old_mean_xyz_mm": [
+        0.12759317006960647,
+        -0.19068806064342914,
+        -0.3544618199731661
+      ],
+      "new_mean_minus_old_mean_translation_mm": 0.42223824476124006,
+      "new_mean_minus_old_mean_rotation_deg": 0.3337380551019125,
+      "old_relative_to_old_mean": {
+        "translation_median_mm": 0.6349753651498302,
+        "translation_max_mm": 4.002827783809666,
+        "translation_rmse_mm": 0.9731747541251193,
+        "rotation_median_deg": 0.2328424537581709,
+        "rotation_max_deg": 0.5986279584750247
+      },
+      "new_relative_to_old_mean": {
+        "translation_median_mm": 1.0622013104077683,
+        "translation_max_mm": 2.8949472532841503,
+        "translation_rmse_mm": 1.528889903079702,
+        "rotation_median_deg": 0.2991146460328206,
+        "rotation_max_deg": 1.585213639666247
+      }
+    }
+  },
+  "interpretation": "No coherent millimeter-scale board displacement is apparent. This is a consistency check, not independent proof of physical immobility; DH, camera mount, PnP, and timing errors remain confounded. The J6≈-179.47 deg sample has anomalous rotation and should be reviewed separately."
+}

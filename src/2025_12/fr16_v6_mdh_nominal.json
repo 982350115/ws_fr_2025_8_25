@@ -1,0 +1,19 @@
+{
+  "source_workbook": "fairino16_v6_DH参数.xlsx",
+  "source_sha256": "fde8000f4f3d79d75f2aa67aa542fc223d7d1ffefbea85c2d7ba1ec6ec0e1342",
+  "source_sheet": "DH参数",
+  "source_range": "A4:E12",
+  "source_note": "Workbook states that these nominal values were extracted from src/fairino_description/urdf/fairino16_v6.urdf, rather than independently measured on this individual robot.",
+  "convention": "Craig modified DH: Rx(alpha_{i-1}) Tx(a_{i-1}) Rz(q_i + theta_offset_i) Tz(d_i)",
+  "columns": ["alpha_rad", "a_m", "d_m", "theta_offset_rad"],
+  "rows": [
+    [0.0, 0.0, 0.180, 0.0],
+    [1.5707963267948966, 0.0, 0.0, 0.0],
+    [0.0, -0.520, 0.0, 0.0],
+    [0.0, -0.400, 0.159, 0.0],
+    [1.5707963267948966, 0.0, 0.114, 0.0],
+    [-1.5707963267948966, 0.0, 0.0, 0.0]
+  ],
+  "angle_conversion_note": "The spreadsheet records alpha as 0, +90, or -90 degrees. The source URDF uses approximate 1.5708 rad; this JSON uses exact pi/2 as the intended angle.",
+  "scope": "Six-axis robot chain ends at wrist3_link; no grinder/tool correction is included. The separate 0.106 m wrist3_link-to-flange fixed transform in the capture URDF is used only for frame reconciliation."
+}

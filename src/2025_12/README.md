@@ -3,6 +3,8 @@
 当前入口是用户指定的 `eye_in_hand_collector_bz.py` 和 `eye_in_hand_solve_bz.py`。
 棋盘格参数为 **11×8 个内角点，格长 0.005 m**。相机固定在法兰，棋盘格固定在工作台。
 完整命令、坐标定义和误差解释见工作区根目录 `手眼标定流程.txt`。
+FR16 V6.0 MDH 离线候选的新姿态验证见 `MDH_新姿态验证流程.md`；
+使用 `mdh_candidate_evaluate.py` 固定候选参数重算 FK，不使用旧 `error.py` 评价 MDH 变化。
 
 在工作区根目录依次执行（每个ROS终端先 source ROS与工作区环境）：
 

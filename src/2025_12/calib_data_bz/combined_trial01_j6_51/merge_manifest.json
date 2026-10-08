@@ -1,0 +1,278 @@
+{
+  "sources": [
+    {
+      "directory": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01",
+      "samples_json_sha256": "bfb942d5af8cd14be0d134eace05abc81883e06af725a43960b755a97ae1da00",
+      "sample_count": 45
+    },
+    {
+      "directory": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial02_j6",
+      "samples_json_sha256": "ca605a7f4587d9547fabdcf3290aa64fa0d2774a6da5727c36cb2c3363e50e7c",
+      "sample_count": 1
+    },
+    {
+      "directory": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial02_j6_02",
+      "samples_json_sha256": "0582445fb81195f1a081f918487f501546582c715ceab29a9da7fa46e5099aec",
+      "sample_count": 5
+    }
+  ],
+  "image_map": [
+    {
+      "merged_image": "img_0001.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0001.png",
+      "sha256": "02a22c1a37765f6fcfc408fcdd51e64e90e48e4e2e30a8ea329d2a2401faf45d"
+    },
+    {
+      "merged_image": "img_0002.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0002.png",
+      "sha256": "713c305804277884595942de0bf6e51a408473f37f92f212a352ce6da3b2aeef"
+    },
+    {
+      "merged_image": "img_0003.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0003.png",
+      "sha256": "b51aaa338b214ac546cf21b7a2d0f01940f7e8d41ed7f1db266e7e604bb39d87"
+    },
+    {
+      "merged_image": "img_0004.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0004.png",
+      "sha256": "b3c2e2f0f481b53d76d04113e020a9a99e19d0c2d6bbe213110acea56abe5979"
+    },
+    {
+      "merged_image": "img_0005.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0005.png",
+      "sha256": "a04e813458be61d18fe3863ecbb0cb6bdb5777ef6b3fbf3cbbef09b5258faca7"
+    },
+    {
+      "merged_image": "img_0006.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0006.png",
+      "sha256": "7a229ec425c0e9aa40590465f1407f57bc75c17e99f7a3d0a9cb311e0fcdc809"
+    },
+    {
+      "merged_image": "img_0007.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0007.png",
+      "sha256": "19a5016be2fd51043b0c1b3a084f6fc5252d7fcf1e42ce713a90531092b69adf"
+    },
+    {
+      "merged_image": "img_0008.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0008.png",
+      "sha256": "be0d43924184e2300600579d9c35861c7961756dd567d176964122cd792fcb69"
+    },
+    {
+      "merged_image": "img_0009.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0009.png",
+      "sha256": "d13f6d73c57adafbb52f247e49e9128226d6170b2f3bcbfa6f39d78478750e31"
+    },
+    {
+      "merged_image": "img_0010.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0010.png",
+      "sha256": "a4ca56723079f35dabef1d19a31b184abb20f4ae52bcaabf6c2588a4b1c87c6b"
+    },
+    {
+      "merged_image": "img_0011.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0011.png",
+      "sha256": "43296aea729d4e2b02348ed042f474fd432abc0e37edde282c0cd8b079b2900a"
+    },
+    {
+      "merged_image": "img_0012.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0012.png",
+      "sha256": "f4a43f970b6465d0e7d0c943112dda2d7c4c56ce2c4758455b9477cdf1c974e0"
+    },
+    {
+      "merged_image": "img_0013.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0013.png",
+      "sha256": "da7c564dede2ae8b36cd758787314fd5eea67a20de4079421abc93a7de219f86"
+    },
+    {
+      "merged_image": "img_0014.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0014.png",
+      "sha256": "6737cfd1866368534d07c59cc18df87bb9dd3bc37d20b02bf2dde89d52520735"
+    },
+    {
+      "merged_image": "img_0015.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0015.png",
+      "sha256": "395b7fb5f1fae4ee669dc4fed5c89f3a098d54a64f5fccade6dc23cdca14ac62"
+    },
+    {
+      "merged_image": "img_0016.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0016.png",
+      "sha256": "c51c5a9ace43db72da0d2c2ca0eb016cea8515cadc8f219c0c9da8b193b2d526"
+    },
+    {
+      "merged_image": "img_0017.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0017.png",
+      "sha256": "2c2215e03ebb7f149f43ea46e760ad4f61e1d77711fed2ecc7e5267d2b2d63a3"
+    },
+    {
+      "merged_image": "img_0018.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0018.png",
+      "sha256": "509d86d8d971b22041fb4ce22c8938a39b38bf5dcf1b694eadf039817facbdac"
+    },
+    {
+      "merged_image": "img_0019.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0019.png",
+      "sha256": "0cc5dc17b9fee9d2d8ab2fc74209f7cb74f3eef6b51ea91539a23fb27f243f3f"
+    },
+    {
+      "merged_image": "img_0020.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0020.png",
+      "sha256": "6e94f2cfa425bba2b19c0c0e7d2ef2fd58fdadaaed6fb30fb000ac1b65209c60"
+    },
+    {
+      "merged_image": "img_0021.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0021.png",
+      "sha256": "fdb66eb22cc7d3228a32d824b6b069211467caf8b30b39294786fa192185f9c5"
+    },
+    {
+      "merged_image": "img_0022.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0022.png",
+      "sha256": "1a67c892d8ed87d43adef37d5289cc4e9f7baf72bdb30d580e68e924e56ad899"
+    },
+    {
+      "merged_image": "img_0023.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0023.png",
+      "sha256": "f7d8615dc8a2d99e7b4e1d8632d36eeff4c93056beed1b929451c4eebc24c92a"
+    },
+    {
+      "merged_image": "img_0024.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0024.png",
+      "sha256": "455e5849aa6b83b85ca1ad2179deaa9e57763091309c732cf417079f081220cc"
+    },
+    {
+      "merged_image": "img_0025.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0025.png",
+      "sha256": "8d335d7178f429c33977f7b380ac38a239ddb117eae3c796e973d545e252f9a6"
+    },
+    {
+      "merged_image": "img_0026.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0026.png",
+      "sha256": "daadb023d0386e91ac0114fa898695e474dd07d737446e3f924a8d5f04362fdb"
+    },
+    {
+      "merged_image": "img_0027.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0027.png",
+      "sha256": "3bebc9d8e4a44569129d19382338b6f44888db138dd04cd23e97b98fdd3a7439"
+    },
+    {
+      "merged_image": "img_0028.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0028.png",
+      "sha256": "569b895dead5dcef7f66ef0a83f135f92f108e4dcf6dd6434c5095b8502321e0"
+    },
+    {
+      "merged_image": "img_0029.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0029.png",
+      "sha256": "0e004695104062e1edf62ff5d61e8d173aefb44701da79c0bdee53d3325d1bd8"
+    },
+    {
+      "merged_image": "img_0030.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0030.png",
+      "sha256": "0e84688ef69e72e0fa536d013a86cc3ecdc058d2f701f4ead4545ee37193aea5"
+    },
+    {
+      "merged_image": "img_0031.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0031.png",
+      "sha256": "db971a9d643c5a41eff608abbe62fdf8dcc2a2a26b0dd4ba09b61135e374e891"
+    },
+    {
+      "merged_image": "img_0032.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0032.png",
+      "sha256": "075c3dacfa6d1a00a3d63d8be8e4046be26ddfa80119b6341d1cbbc5bee7f38a"
+    },
+    {
+      "merged_image": "img_0033.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0033.png",
+      "sha256": "fd99121f30e6af757055867d5354cae699c94dd8f0b014577fd1774683fff4d3"
+    },
+    {
+      "merged_image": "img_0034.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0034.png",
+      "sha256": "49f3c709e2ff7c4aefb1e15a32a78f0d092152b2ca54b3fec3a9cbfa9fbaad00"
+    },
+    {
+      "merged_image": "img_0035.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0035.png",
+      "sha256": "67f855212ba331db226c7ca3b3e486f64875cc46911df91749e10397b0fffdaf"
+    },
+    {
+      "merged_image": "img_0036.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0036.png",
+      "sha256": "5c837a24bbf72ac60dc5b3ace2cadefbe1db682ed8fde77e669b421ddcff8a00"
+    },
+    {
+      "merged_image": "img_0037.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0037.png",
+      "sha256": "d770aed9b660c19b2a3c794702344035b4c3137292c0f0702e3a3183592f5096"
+    },
+    {
+      "merged_image": "img_0038.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0038.png",
+      "sha256": "262a1be608a7e8c97e491a7ef3735f4df5de288e4b958f1c97effca71a34ee55"
+    },
+    {
+      "merged_image": "img_0039.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0039.png",
+      "sha256": "d787c9ccb3893e40016bd473cec24020a15a327408f076090d864d93608f25da"
+    },
+    {
+      "merged_image": "img_0040.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0040.png",
+      "sha256": "a0ed54c3cec9654826e4a6569d86a1c48f9685bab8de13594712d3d807d9d3b6"
+    },
+    {
+      "merged_image": "img_0041.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0041.png",
+      "sha256": "b682ff5c37332f46a5e576fc2a75c0055bd5a524d54f30dc91e25cc3439f39ed"
+    },
+    {
+      "merged_image": "img_0042.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0042.png",
+      "sha256": "55244584f738f756d5f899c90f3b65668a1f5f321fd8899826803b1fa9c562f6"
+    },
+    {
+      "merged_image": "img_0043.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0043.png",
+      "sha256": "4453945081b3ed6b9a6494f2d276211b4cf4c24fd0effb75e3ddd7f120a44ef3"
+    },
+    {
+      "merged_image": "img_0044.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0044.png",
+      "sha256": "a35ff0b696bb31de4a552fedc9a0c2251e53b8d8d5ec3243ad64e805940e7aa1"
+    },
+    {
+      "merged_image": "img_0045.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial01/img_0045.png",
+      "sha256": "7185fb085d48d9e2ba48ce1e2a71d39687a08acca8d77edda5ee58fd3272df19"
+    },
+    {
+      "merged_image": "img_0046.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial02_j6/img_0001.png",
+      "sha256": "dd26162dd95118579f82ca3dc146dd67e282320bb07f1081d9f0c0dd9796b53b"
+    },
+    {
+      "merged_image": "img_0047.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial02_j6_02/img_0001.png",
+      "sha256": "f90c32cacab1428851a8ce1dd0ed3097115c32ad6864af1207e5d66e92379516"
+    },
+    {
+      "merged_image": "img_0048.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial02_j6_02/img_0002.png",
+      "sha256": "0383b08cf2679571f76e2dde0dfc394fdce4b399ff68c8dbaaa668a1cd99d312"
+    },
+    {
+      "merged_image": "img_0049.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial02_j6_02/img_0003.png",
+      "sha256": "1b1f4c3adf2325c8b20ecd60321162662b8d00c3d8b76549540bd98b7e408075"
+    },
+    {
+      "merged_image": "img_0050.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial02_j6_02/img_0004.png",
+      "sha256": "7fc84063fa3ea564becc284f521f83b37f8a5f9eafb4b95ae32261787c33e192"
+    },
+    {
+      "merged_image": "img_0051.png",
+      "source": "/home/han/wrx_fr/ws_fr_2025_8_25-main/ws_fr_2025_8_25-main/src/2025_12/calib_data_bz/trial02_j6_02/img_0005.png",
+      "sha256": "92ab4d305bc0f008f495f7dd2969b27efdc3b0bdd8d88403bc1a0bca5dec7af2"
+    }
+  ],
+  "merged_samples_sha256": "61854c62462111ccef4a14cf081f983ebfd49c48b242d876712c448a0597fb23",
+  "sample_count": 51
+}
