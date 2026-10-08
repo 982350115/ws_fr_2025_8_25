@@ -1,0 +1,685 @@
+{
+  "status": "offline_candidate_no_robot_writeback",
+  "method": "two-stage physical/virtual sphere initialization, then joint weighted robust nonlinear least squares (SciPy TRF soft_l1)",
+  "frame_chain": "Craig MDH base->wrist3, fixed 0.106 m wrist3->flange, fixed supplied flange->laser",
+  "inputs_sha256": {
+    "data": "8c00aed41298382078e0afbfb20e4158fb37752a2b8eabc19d3b1b3ec8b1175e",
+    "nominal": "197bba7ab5f1e82b02fc7690289f9dd6f81a6780b5bc66b9b294c83a0750b453"
+  },
+  "settings": {
+    "selected_parameters": [
+      "alpha2",
+      "a2",
+      "a3",
+      "d4",
+      "alpha5",
+      "theta2",
+      "theta3",
+      "theta4",
+      "d5",
+      "theta5"
+    ],
+    "mdh_screening_bound_mm_or_mrad": 10.0,
+    "mdh_prior_scale_mm_or_mrad": 10.0,
+    "outer_weight": 1.0,
+    "sigma_inner_m": 5e-05,
+    "sigma_outer_m": 0.0005,
+    "virtual_radius_fixed": true,
+    "points_per_capture_normalized": true
+  },
+  "observability": {
+    "selected_parameter_count": 10,
+    "projected_rank": 10,
+    "normalized_condition": 5.4556879951790265,
+    "relative_rank_threshold": 1e-06,
+    "singular_values": [
+      1.6721601984415557,
+      1.4161406111727122,
+      1.3071810702403361,
+      1.023287906197758,
+      0.9313491840214977,
+      0.769068017391916,
+      0.6487831849859507,
+      0.5987817472680137,
+      0.332126631040974,
+      0.30649850209894275
+    ],
+    "note": "Local finite-difference rank after projecting out sphere centers, virtual center and optional virtual radius; measurement residual only."
+  },
+  "parameters": {
+    "nominal_mdh_rows_rad_m": [
+      [
+        0.0,
+        0.0,
+        0.18,
+        0.0
+      ],
+      [
+        1.5707963267948966,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -0.52,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -0.4,
+        0.159,
+        0.0
+      ],
+      [
+        1.5707963267948966,
+        0.0,
+        0.114,
+        0.0
+      ],
+      [
+        -1.5707963267948966,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "corrected_mdh_rows_rad_m": [
+      [
+        0.0,
+        0.0,
+        0.18,
+        0.0
+      ],
+      [
+        1.5721743695777786,
+        0.0022124647421604316,
+        0.0,
+        0.00047292928781961723
+      ],
+      [
+        0.0,
+        -0.5210106954407879,
+        0.0,
+        -0.0007883732781307767
+      ],
+      [
+        0.0,
+        -0.4,
+        0.15991136895894337,
+        0.0003541237218997471
+      ],
+      [
+        1.5713964310129616,
+        0.0,
+        0.11470375412268502,
+        -0.0005053358537405013
+      ],
+      [
+        -1.5707963267948966,
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "corrections_mm_or_mrad": {
+      "alpha2": 1.3780427828818975,
+      "a2": 2.2124647421604315,
+      "a3": -1.010695440787955,
+      "d4": 0.9113689589433679,
+      "alpha5": 0.6001042180650679,
+      "theta2": 0.47292928781961724,
+      "theta3": -0.7883732781307767,
+      "theta4": 0.35412372189974706,
+      "d5": 0.7037541226850152,
+      "theta5": -0.5053358537405014
+    },
+    "T_flange_laser_fixed": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.035
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        -0.018
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.085
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "sphere_centers_base_m": {
+      "s1": [
+        0.5495303916177335,
+        -0.14116151116981093,
+        0.5232912074175846
+      ],
+      "s2": [
+        0.5375235230740824,
+        -0.0829658559280504,
+        0.5393337211094186
+      ],
+      "s3": [
+        0.643804838335578,
+        -0.04841493667793105,
+        0.48785757050725226
+      ],
+      "s4": [
+        0.6017988300063855,
+        0.025112010670908357,
+        0.4458477489139318
+      ],
+      "s5": [
+        0.5451101607806971,
+        -0.19562279369546837,
+        0.45171078255110303
+      ],
+      "s6": [
+        0.48902649643046986,
+        -0.1600218713203805,
+        0.4854214109409319
+      ]
+    },
+    "virtual_center_base_m": [
+      0.549993393947517,
+      -0.07999629163012668,
+      0.42002624275689504
+    ],
+    "virtual_radius_m": 0.12,
+    "fixed_wrist3_flange_m": 0.106,
+    "bound_hits": []
+  },
+  "fit": {
+    "nominal_nfev": 5,
+    "corrected_nfev": 12
+  },
+  "errors": {
+    "nominal": {
+      "train_inner": {
+        "capture_count": 30,
+        "point_count": 900,
+        "radial_rmse_mm": 0.7432446761262967,
+        "radial_abs_95pct_mm": 1.5336638531938023,
+        "per_capture": [
+          {
+            "capture_id": "s1_p1",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.43883949796457944
+          },
+          {
+            "capture_id": "s1_p2",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 2.0841643286081797
+          },
+          {
+            "capture_id": "s1_p3",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.34572777504923147
+          },
+          {
+            "capture_id": "s1_p4",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.8732010807351008
+          },
+          {
+            "capture_id": "s1_p5",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.14919886342006017
+          },
+          {
+            "capture_id": "s2_p1",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.5816597842410859
+          },
+          {
+            "capture_id": "s2_p2",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 1.1114618886707095
+          },
+          {
+            "capture_id": "s2_p3",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.21521301049187858
+          },
+          {
+            "capture_id": "s2_p4",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.06759733460645731
+          },
+          {
+            "capture_id": "s2_p5",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.491113079767852
+          },
+          {
+            "capture_id": "s3_p1",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.376187192938805
+          },
+          {
+            "capture_id": "s3_p2",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.6310567042577223
+          },
+          {
+            "capture_id": "s3_p3",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.42528340766888284
+          },
+          {
+            "capture_id": "s3_p4",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.417804923205735
+          },
+          {
+            "capture_id": "s3_p5",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.5996354430809083
+          },
+          {
+            "capture_id": "s4_p1",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.30308466886543806
+          },
+          {
+            "capture_id": "s4_p2",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.7844347210825252
+          },
+          {
+            "capture_id": "s4_p3",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.4350730524775406
+          },
+          {
+            "capture_id": "s4_p4",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.6180901719949428
+          },
+          {
+            "capture_id": "s4_p5",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.23463285637793424
+          },
+          {
+            "capture_id": "s5_p1",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 1.057997804511561
+          },
+          {
+            "capture_id": "s5_p2",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.2362189537145067
+          },
+          {
+            "capture_id": "s5_p3",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.5728511897020248
+          },
+          {
+            "capture_id": "s5_p4",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 1.6619908090490587
+          },
+          {
+            "capture_id": "s5_p5",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.36245285382514575
+          },
+          {
+            "capture_id": "s6_p1",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.5412670141831645
+          },
+          {
+            "capture_id": "s6_p2",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.8546600060567827
+          },
+          {
+            "capture_id": "s6_p3",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.6744775563384638
+          },
+          {
+            "capture_id": "s6_p4",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.27327548880606384
+          },
+          {
+            "capture_id": "s6_p5",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.853116001284548
+          }
+        ]
+      },
+      "validation_inner": {
+        "capture_count": 6,
+        "point_count": 180,
+        "radial_rmse_mm": 1.1455126297130256,
+        "radial_abs_95pct_mm": 2.671329137253477,
+        "per_capture": [
+          {
+            "capture_id": "s1_p6",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.6912044894923028
+          },
+          {
+            "capture_id": "s2_p6",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 1.2348412288296027
+          },
+          {
+            "capture_id": "s3_p6",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.5923674491702634
+          },
+          {
+            "capture_id": "s4_p6",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.48978249909854027
+          },
+          {
+            "capture_id": "s5_p6",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 2.2438274057032497
+          },
+          {
+            "capture_id": "s6_p6",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.49502634721388317
+          }
+        ]
+      },
+      "train_outer_rmse_mm": 0.5007822142818306
+    },
+    "corrected": {
+      "train_inner": {
+        "capture_count": 30,
+        "point_count": 900,
+        "radial_rmse_mm": 0.04926967920236866,
+        "radial_abs_95pct_mm": 0.09489672459375066,
+        "per_capture": [
+          {
+            "capture_id": "s1_p1",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04785534634963951
+          },
+          {
+            "capture_id": "s1_p2",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04987030604201571
+          },
+          {
+            "capture_id": "s1_p3",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.06421042947685904
+          },
+          {
+            "capture_id": "s1_p4",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.056869273208954074
+          },
+          {
+            "capture_id": "s1_p5",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.051049935698407614
+          },
+          {
+            "capture_id": "s2_p1",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.03336875319490777
+          },
+          {
+            "capture_id": "s2_p2",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.045971767830856956
+          },
+          {
+            "capture_id": "s2_p3",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.0644061386438463
+          },
+          {
+            "capture_id": "s2_p4",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.041670360675612986
+          },
+          {
+            "capture_id": "s2_p5",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04761048527983077
+          },
+          {
+            "capture_id": "s3_p1",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.044954602705811704
+          },
+          {
+            "capture_id": "s3_p2",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.06070496385287328
+          },
+          {
+            "capture_id": "s3_p3",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04786534865717442
+          },
+          {
+            "capture_id": "s3_p4",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04895882266205972
+          },
+          {
+            "capture_id": "s3_p5",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.040241027354517324
+          },
+          {
+            "capture_id": "s4_p1",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.052018344029453836
+          },
+          {
+            "capture_id": "s4_p2",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.03770201341719745
+          },
+          {
+            "capture_id": "s4_p3",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.05179527322441102
+          },
+          {
+            "capture_id": "s4_p4",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.05372559143794371
+          },
+          {
+            "capture_id": "s4_p5",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.0470003227770289
+          },
+          {
+            "capture_id": "s5_p1",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.05240113470374896
+          },
+          {
+            "capture_id": "s5_p2",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.06056378704257267
+          },
+          {
+            "capture_id": "s5_p3",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.043963495297900175
+          },
+          {
+            "capture_id": "s5_p4",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04286214514532502
+          },
+          {
+            "capture_id": "s5_p5",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04384617634635136
+          },
+          {
+            "capture_id": "s6_p1",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.045069416530242705
+          },
+          {
+            "capture_id": "s6_p2",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04461229298855614
+          },
+          {
+            "capture_id": "s6_p3",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.044767331112651375
+          },
+          {
+            "capture_id": "s6_p4",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.044585358668320925
+          },
+          {
+            "capture_id": "s6_p5",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.051649953450319364
+          }
+        ]
+      },
+      "validation_inner": {
+        "capture_count": 6,
+        "point_count": 180,
+        "radial_rmse_mm": 0.05108317003837123,
+        "radial_abs_95pct_mm": 0.10256681290783524,
+        "per_capture": [
+          {
+            "capture_id": "s1_p6",
+            "sphere_id": "s1",
+            "point_count": 30,
+            "radial_rmse_mm": 0.05402791260057694
+          },
+          {
+            "capture_id": "s2_p6",
+            "sphere_id": "s2",
+            "point_count": 30,
+            "radial_rmse_mm": 0.056404912506691746
+          },
+          {
+            "capture_id": "s3_p6",
+            "sphere_id": "s3",
+            "point_count": 30,
+            "radial_rmse_mm": 0.05952748934755233
+          },
+          {
+            "capture_id": "s4_p6",
+            "sphere_id": "s4",
+            "point_count": 30,
+            "radial_rmse_mm": 0.04496495574882914
+          },
+          {
+            "capture_id": "s5_p6",
+            "sphere_id": "s5",
+            "point_count": 30,
+            "radial_rmse_mm": 0.05269101546396553
+          },
+          {
+            "capture_id": "s6_p6",
+            "sphere_id": "s6",
+            "point_count": 30,
+            "radial_rmse_mm": 0.034852542633368754
+          }
+        ]
+      },
+      "train_outer_rmse_mm": 0.011370363116904519
+    }
+  },
+  "warnings": [
+    "Only inner-sphere held-out scans of previously observed sphere positions are validated; outer-sphere residual uses fitted training centers.",
+    "No independent flange pose truth is present; lower radial residuals do not prove lower absolute robot positioning error."
+  ]
+}
