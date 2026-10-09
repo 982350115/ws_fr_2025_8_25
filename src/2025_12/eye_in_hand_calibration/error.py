@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Evaluate eye-in-hand calibration on an isolated 30/15 train/validation split.
-//用于计算误差，给出平移，旋转和像素误差
+//用于计算误差，给出平移，旋转和像素误差。
 The transform convention used by this program is T_parent_child: it maps a
 point expressed in the child frame into the parent frame.  Therefore the input
 camera transform must satisfy:
